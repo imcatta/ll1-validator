@@ -18,7 +18,7 @@ test('simple case', t => {
     })
 });
 
-test('simple case with commments', t => {
+test('simple case with comments', t => {
     const grammar = `
     /* this is\n
     a multiline\n
