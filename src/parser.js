@@ -9,8 +9,6 @@ class Visitor {
   }
 
   visitRuleList(ctx) {
-    console.assert(ctx && ctx.children);
-
     const rules = [];
     ctx.children.forEach(child => {
       if (child.constructor.name === 'Rule_Context') {
@@ -28,10 +26,6 @@ class Visitor {
   }
 
   visitRule(ctx) {
-    if (!ctx || !ctx.children) {
-      return null;
-    }
-
     let l;
     let r = [];
     ctx.children.forEach(element => {
@@ -49,10 +43,6 @@ class Visitor {
   }
 
   visitR(ctx) {
-    if (!ctx || !ctx.children) {
-      return [];
-    }
-
     return ctx.children.map(child => ({
       type: child.symbol.type,
       value: child.getText()
