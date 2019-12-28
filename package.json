@@ -2,10 +2,9 @@
   "name": "ll1-validator",
   "version": "0.0.5",
   "description": "A tool that checks if a given grammar is LL(1).",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "ava",
-    "build": "webpack"
+    "test": "ava"
   },
   "keywords": [
     "LL(1)",
@@ -14,14 +13,11 @@
   "author": "Andrea Cattaneo",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "antlr4": "^4.7.2",
-    "ava": "^2.4.0",
-    "babel-loader": "^8.0.6",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "ava": "^2.4.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "antlr4": "^4.7.2"
+  },
   "repository": "https://github.com/imcatta/ll1-validator",
   "ava": {
     "files": [
