@@ -50,7 +50,7 @@ class Visitor {
   }
 }
 
-module.exports = function (input) {
+module.exports.parseString = function (input) {
   const chars = new antlr4.InputStream(input);
   const lexer = new GrammarlangLexer(chars);
   const tokens = new antlr4.CommonTokenStream(lexer);

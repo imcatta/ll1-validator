@@ -3,12 +3,12 @@ const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangL
 const parser = require('../src/parser.js');
 
 test('empty string', t => {
-    t.deepEqual(parser(''), {})
+    t.deepEqual(parser.parseString(''), {})
 });
 
 test('simple case', t => {
     const grammar = `S -> a S;`
-    t.deepEqual(parser(grammar), {
+    t.deepEqual(parser.parseString(grammar), {
         'S': [
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'a' },
@@ -25,7 +25,7 @@ test('simple case with comments', t => {
     comment */\n
     \n
     S -> a S; // this is an inline comment`
-    t.deepEqual(parser(grammar), {
+    t.deepEqual(parser.parseString(grammar), {
         'S': [
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'a' },
@@ -41,7 +41,7 @@ test('complex case', t => {
     S -> ;
     D -> b;
     `
-    t.deepEqual(parser(grammar), {
+    t.deepEqual(parser.parseString(grammar), {
         'S': [
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'a' },
