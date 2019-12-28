@@ -1,6 +1,7 @@
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 
 function calculateNullables(grammar) {
+    
     const nonTerminals = Object.keys(grammar);
     const nullableRules = {};
     const nullableNonTerminals = {};
@@ -213,9 +214,6 @@ function calculateFollowSets(grammar)
     followsets=initial_followsets;
     var iteration=0;
     var goahead=true;
-    //console.log(followsets);
-    //console.log(non_terminals);
-    //console.log(initial_followsets);
     do{
         iteration+=1;
         Object.keys(non_terminals).forEach(e => {
@@ -233,7 +231,6 @@ function calculateFollowSets(grammar)
         });
         goahead=isDifferent(followsets,iteration);
     }while(goahead);
-    //console.log(followsets);
     return followsets;
 }
 
@@ -242,11 +239,37 @@ function isDifferent(obj, iter) {
     Object.keys(obj).forEach(e => {
     var newRow = obj[e][iter];
     var oldRow = obj[e][iter-1];
-    //console.log(oldRow.length);
-    //console.log(newRow.length);
     
     if(newRow.length!=oldRow.length)
         ret= true;
+    });
+    return ret;
+}
+
+function calculateLookAheads(grammar)
+{
+    var ret={};
+    const firstSets= calculateFirstSets(grammar);
+    const followSets= calculateFollowSets(grammar);
+    const nullableRules= calculateNullables(grammar).nullableRules;
+    Object.keys(grammar).forEach(l =>{
+        ret[l]=[];
+        grammar[l].forEach((r,index)=>{
+            ret[l][index]=[];
+            const tmp_inits=firstSets[l][index][firstSets[l][index].length-1];
+            tmp_inits.forEach(i=>{
+                ret[l][index].push(i);
+            });
+            if(nullableRules[l][index]){
+                const tmp_follows=followSets[l][followSets[l].length-1];
+                tmp_follows.forEach(f=>{
+                    if(!ret[l][index].includes(f))
+                        ret[l][index].push(f);
+                });
+                
+            }
+            ret[l][index].sort();    
+        });
     });
     return ret;
 }
@@ -257,3 +280,4 @@ module.exports.calculateFirstSetsDependencies = calculateFirstSetsDependencies;
 module.exports.calculateFirstSets = calculateFirstSets;
 module.exports.calculateFollowSets=calculateFollowSets;
 module.exports.calculateFollowSetDipendencies=calculateFollowSetDipendencies;
+module.exports.calculateLookAheads=calculateLookAheads;

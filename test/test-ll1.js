@@ -559,3 +559,97 @@ test('calculate follow sets case 2', t => {
         ]
     });
 });
+test('calculate look aheads case 1', t => {
+    const grammar = {
+        'S': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
+            ]
+        ],
+        'T': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'a' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'c' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'c' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'q' }
+            ]
+        ],
+
+    };
+    t.deepEqual(ll1.calculateLookAheads(grammar), {
+        'S': [
+            ['a','b','c','q']
+        ],
+        'T': [
+            ['a'],
+            ['b'],
+            ['c'],
+            ['q']
+        ]
+    });
+});
+
+test('calculate look aheads case 2', t => {
+    const grammar = {
+        'S': [
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
+        ],
+        'A': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            ],
+            []
+        ],
+        'Z': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'y' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ]
+        ]
+    };
+    t.deepEqual(ll1.calculateLookAheads(grammar), {
+        'S': [
+                ['&#x2199;','a', 'b', 'x', 'y']
+        ],
+        'A': [
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['&#x2199;','a', 'b', 'x', 'y'],
+            ['&#x2199;','a', 'b', 'x', 'y']
+        ],
+        'Z': [
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['&#x2199;','a', 'b', 'x', 'y']
+        ]
+    });
+});
