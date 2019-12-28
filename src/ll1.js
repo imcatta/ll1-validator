@@ -142,7 +142,118 @@ function calculateFirstSets(grammar) {
     return firstSets;
 }
 
+function calculateFollowSetDipendencies(grammar) //First run for follow sets: gets non terminals and terminals next to each non terminal
+{
+    var follow_nonTerminals={}
+    var follow_terminals={}
+    Object.keys(grammar).forEach(it =>{
+        follow_nonTerminals[it] = [];
+        follow_terminals[it]= [[]];
+    });
+    Object.keys(grammar).forEach(l => {
+        var pushNext=false;
+        Object.keys(grammar).forEach(f =>{
+            grammar[f].forEach(r => {
+                var lastNT=undefined;
+                for (const item of r) {
+                    if(pushNext) {
+                        if(item.type === GrammarlangLexer.NONTERMINAL)
+                        {
+                            const tmp_itemInits=calculateFirstSets(grammar)[item.value];
+                            tmp_itemInits.forEach(x=>{
+                                const tmp_follows=x[0];
+                                tmp_follows.forEach(t=>{
+                                    if(!follow_terminals[l][0].includes(t))
+                                        follow_terminals[l][0].push(t);
+                                });
+                            });
+                        
+                            if(calculateNullables(grammar)[item.value]===false)
+                                pushNext=false;
+                        }
+                        else if (item.type === GrammarlangLexer.TERMINAL) {
+                            if(!follow_terminals[l][0].includes(item.value))
+                                follow_terminals[l][0].push(item.value);
+                            pushNext=false;
+                        }
+                    }
+                    if (item.value === l) {
+                        pushNext=true;
+                    }
+                    if(item.type===GrammarlangLexer.NONTERMINAL){
+                        lastNT=item.value;
+                    }else{
+                        lastNT=undefined;
+                    }
+                }
+                if(pushNext){
+                    if(!follow_nonTerminals[l].includes(f))
+                        follow_nonTerminals[l].push(f); //if I find l at the end, f's follows are inherited
+                }
+                if(lastNT){
+                    if(!follow_nonTerminals[lastNT].includes(f))
+                        follow_nonTerminals[lastNT].push(f);
+                }
+            });
+        });
+        
+    });
+    follow_terminals['S'][0].push("&#x2199;");
+    return{
+        follow_nonTerminals: follow_nonTerminals,
+        follow_terminals: follow_terminals
+    }
+}
+
+function calculateFollowSets(grammar)
+{
+    var followsets={}
+    const non_terminals=calculateFollowSetDipendencies(grammar).follow_nonTerminals;
+    const initial_followsets=calculateFollowSetDipendencies(grammar).follow_terminals;
+    followsets=initial_followsets;
+    var iteration=0;
+    var goahead=true;
+    //console.log(followsets);
+    //console.log(non_terminals);
+    //console.log(initial_followsets);
+    do{
+        iteration+=1;
+        Object.keys(non_terminals).forEach(e => {
+            followsets[e][iteration]=followsets[e][iteration-1].slice();
+        });
+        Object.keys(non_terminals).forEach(e => {
+            non_terminals[e].forEach(nt =>{
+                followsets[nt][iteration-1].forEach(fs =>{
+                    if(!followsets[e][iteration].includes(fs))
+                        followsets[e][iteration].push(fs);
+                });
+                
+            });
+            followsets[e][iteration].sort();
+        });
+        goahead=isDifferent(followsets,iteration);
+    }while(goahead);
+    //console.log(followsets);
+    return followsets;
+}
+
+function isDifferent(obj, iter) {
+    var ret=false;
+    Object.keys(obj).forEach(e => {
+    var newRow = obj[e][iter];
+    var oldRow = obj[e][iter-1];
+    //console.log(oldRow.length);
+    //console.log(newRow.length);
+    
+    if(newRow.length!=oldRow.length)
+        ret= true;
+    });
+    return ret;
+}
+
 module.exports.calculateNullables = calculateNullables;
 module.exports.initializeFirstSets = initializeFirstSets;
 module.exports.calculateFirstSetsDependencies = calculateFirstSetsDependencies;
 module.exports.calculateFirstSets = calculateFirstSets;
+module.exports.calculateFollowSets=calculateFollowSets;
+module.exports.calculateFollowSetDipendencies=calculateFollowSetDipendencies;
