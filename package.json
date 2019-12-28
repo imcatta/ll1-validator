@@ -15,14 +15,13 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.7.7",
+    "antlr4": "^4.7.2",
     "ava": "^2.4.0",
     "babel-loader": "^8.0.6",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
-  "dependencies": {
-    "antlr4": "^4.7.2"
-  },
+  "dependencies": {},
   "repository": "https://github.com/imcatta/ll1-validator",
   "ava": {
     "files": [
