@@ -20,6 +20,9 @@ module.exports = {
     resolve: {
         extensions: ['.js'],
     },
+    resolveLoader: {
+        root: path.join(__dirname, 'node_modules')
+    },
     node: {
         fs: 'empty',
         module: 'empty',
