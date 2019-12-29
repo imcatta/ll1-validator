@@ -199,7 +199,7 @@ function calculateFollowSetDipendencies(grammar) //First run for follow sets: ge
         });
         
     });
-    follow_terminals['S'][0].push("&#x2199;");
+    follow_terminals['S'][0].push("↙");
     return{
         follow_nonTerminals: follow_nonTerminals,
         follow_terminals: follow_terminals
