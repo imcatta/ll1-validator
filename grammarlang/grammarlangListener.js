@@ -20,6 +20,15 @@ grammarlangListener.prototype.exitRulelist = function(ctx) {
 };
 
 
+// Enter a parse tree produced by grammarlangParser#start_symbol.
+grammarlangListener.prototype.enterStart_symbol = function(ctx) {
+};
+
+// Exit a parse tree produced by grammarlangParser#start_symbol.
+grammarlangListener.prototype.exitStart_symbol = function(ctx) {
+};
+
+
 // Enter a parse tree produced by grammarlangParser#rule_.
 grammarlangListener.prototype.enterRule_ = function(ctx) {
 };

@@ -10,19 +10,28 @@ class Visitor {
 
   visitRuleList(ctx) {
     const rules = [];
+    let _start_symbol = 'S';
     ctx.children.forEach(child => {
       if (child.constructor.name === 'Rule_Context') {
         rules.push(this.visitRule(child))
+      } else if (child.constructor.name === 'Start_symbolContext') {
+        _start_symbol = this.visitStartSymbol(child);
       }
     });
-    
-    const result = {};
+
+    const result = { _start_symbol };
     rules.forEach(rule => {
       const tmp = result[rule.l] || [];
       tmp.push(rule.r);
       result[rule.l] = tmp;
     });
     return result;
+  }
+
+  visitStartSymbol(ctx) {
+    return ctx.children
+      .find(child => child.symbol.type === GrammarlangParser.NONTERMINAL)
+      .getText();
   }
 
   visitRule(ctx) {

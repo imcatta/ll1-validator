@@ -1,10 +1,12 @@
 grammar grammarlang;
 
-rulelist: rule_* EOF;
+rulelist: start_symbol? rule_+ EOF;
+start_symbol: START_SYMBOL_KEYWORD NONTERMINAL SEMICOLON;
 rule_: l ASSIGN r SEMICOLON;
 l: NONTERMINAL;
 r: (NONTERMINAL | TERMINAL)*;
 
+START_SYMBOL_KEYWORD: '_start_symbol';
 ASSIGN: '->';
 SEMICOLON: ';';
 NONTERMINAL: ('A' ..'Z') ('A' ..'Z' | '0' ..'9')*;
