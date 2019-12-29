@@ -84,8 +84,8 @@ test('calculate nullables case 4', t => {
     });
 });
 
-test('calculate nullables case 5', t=>{
-    const grammar={
+test('calculate nullables case 5', t => {
+    const grammar = {
         'S': [
             [
                 { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
@@ -114,10 +114,10 @@ test('calculate nullables case 5', t=>{
 
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
-        nullableRules: { S: [false], T: [false, false,false,false]},
-        nullableNonTerminals: { S: false, T: false}
+        nullableRules: { S: [false], T: [false, false, false, false] },
+        nullableNonTerminals: { S: false, T: false }
     });
-    
+
 });
 
 test('initialize first sets case 1', t => {
@@ -498,8 +498,8 @@ test('calculate follow sets case 1', t => {
         ],
         'T': [
             ['a', 'b', 'c'],
-            ['↙','a','b','c'],
-            ['↙','a','b','c']
+            ['a', 'b', 'c', '↙'],
+            ['a', 'b', 'c', '↙']
         ]
     });
 });
@@ -540,22 +540,22 @@ test('calculate follow sets case 2', t => {
     };
     t.deepEqual(ll1.calculateFollowSets(grammar), {
         'S': [
-                ['↙'],
-                ['↙', 'x','y'],
-                ['↙','a', 'b', 'x', 'y'],
-                ['↙','a', 'b', 'x', 'y']
+            ['↙'],
+            ['x', 'y', '↙',],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
         ],
         'A': [
-                ['a','b'],
-                ['↙','a', 'b'],
-                ['↙','a', 'b', 'x', 'y'],
-                ['↙','a', 'b', 'x', 'y']
+            ['a', 'b'],
+            ['a', 'b', '↙'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
         ],
         'Z': [
-                ['x', 'y'],
-                ['a', 'b', 'x', 'y'],
-                ['↙','a', 'b', 'x', 'y'],
-                ['↙','a', 'b', 'x', 'y']
+            ['x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
         ]
     });
 });
@@ -590,7 +590,7 @@ test('calculate look aheads case 1', t => {
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
         'S': [
-            ['a','b','c','q']
+            ['a', 'b', 'c', 'q']
         ],
         'T': [
             ['a'],
@@ -638,18 +638,18 @@ test('calculate look aheads case 2', t => {
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
         'S': [
-                ['↙','a', 'b', 'x', 'y']
+            ['a', 'b', 'x', 'y', '↙']
         ],
         'A': [
             ['a', 'b', 'x', 'y'],
             ['a', 'b', 'x', 'y'],
-            ['↙','a', 'b', 'x', 'y'],
-            ['↙','a', 'b', 'x', 'y']
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
         ],
         'Z': [
             ['a', 'b', 'x', 'y'],
             ['a', 'b', 'x', 'y'],
-            ['↙','a', 'b', 'x', 'y']
+            ['a', 'b', 'x', 'y', '↙',]
         ]
     });
 });
