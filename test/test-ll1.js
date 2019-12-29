@@ -9,7 +9,8 @@ test('calculate nullables case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'a' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
         nullableRules: { S: [false] },
@@ -26,7 +27,8 @@ test('calculate nullables case 2', t => {
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ],
             []
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
         nullableRules: { S: [false, true] },
@@ -42,7 +44,8 @@ test('calculate nullables case 3', t => {
         ],
         'D': [
             []
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
         nullableRules: { S: [true], D: [true] },
@@ -76,7 +79,8 @@ test('calculate nullables case 4', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'b' },
             ],
             []
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
         nullableRules: { S: [true, true], D: [true, false, true], E: [false, true] },
@@ -111,6 +115,7 @@ test('calculate nullables case 5', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'q' }
             ]
         ],
+        '_start_symbol': 'S',
 
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
@@ -127,7 +132,8 @@ test('initialize first sets case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'a' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.initializeFirstSets(grammar), {
         'S': [[['a']]]
@@ -149,7 +155,8 @@ test('initialize first sets case 2', t => {
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'b' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.initializeFirstSets(grammar), {
         'S': [[['a']], [[]]],
@@ -170,7 +177,8 @@ test('initialize first sets case 3', t => {
         ],
         'D': [
             []
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.initializeFirstSets(grammar), {
         'S': [[['a']], [[]]],
@@ -211,7 +219,8 @@ test('initialize first sets case 4', t => {
             [
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.initializeFirstSets(grammar), {
         'S': [[[]]],
@@ -225,7 +234,7 @@ test('initialize first sets case 4', t => {
             [['x']],
             [['y']],
             [[]]
-        ]
+        ],
     });
 });
 
@@ -247,7 +256,7 @@ test('calculate first sets dependencies case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'b' }
             ]
         ],
-
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFirstSetsDependencies(grammar), {
         'S': [new Set(), new Set(['D'])],
@@ -280,7 +289,7 @@ test('calculate first sets dependencies case 2', t => {
             ],
             []
         ],
-
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFirstSetsDependencies(grammar), {
         'S': [new Set(['S', 'E', 'D']), new Set(['D']), new Set([])],
@@ -305,7 +314,7 @@ test('calculate first sets case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'b' }
             ]
         ],
-
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFirstSets(grammar), {
         'S': [
@@ -314,7 +323,7 @@ test('calculate first sets case 1', t => {
         ],
         'D': [
             [['b'], ['b'], ['b']]
-        ]
+        ],
     });
 });
 
@@ -344,7 +353,8 @@ test('calculate first sets case 2', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'b' },
             ],
             []
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFirstSets(grammar), {
         'S': [
@@ -359,7 +369,7 @@ test('calculate first sets case 2', t => {
         'E': [
             [['b'], ['b'], ['b'], ['b']],
             [[], [], [], []]
-        ]
+        ],
     });
 });
 
@@ -397,7 +407,8 @@ test('calculate first sets case 3', t => {
             [
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFirstSets(grammar), {
         'S': [
@@ -457,7 +468,7 @@ test('calculate first sets case 3', t => {
                 ['a', 'b', 'x', 'y'],
                 ['a', 'b', 'x', 'y']
             ]
-        ]
+        ],
     });
 });
 
@@ -488,7 +499,7 @@ test('calculate follow sets case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'q' }
             ]
         ],
-
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFollowSets(grammar), {
         'S': [
@@ -500,7 +511,7 @@ test('calculate follow sets case 1', t => {
             ['a', 'b', 'c'],
             ['a', 'b', 'c', '↙'],
             ['a', 'b', 'c', '↙']
-        ]
+        ],
     });
 });
 test('calculate follow sets case 2', t => {
@@ -536,7 +547,8 @@ test('calculate follow sets case 2', t => {
             [
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateFollowSets(grammar), {
         'S': [
@@ -556,7 +568,7 @@ test('calculate follow sets case 2', t => {
             ['a', 'b', 'x', 'y'],
             ['a', 'b', 'x', 'y', '↙'],
             ['a', 'b', 'x', 'y', '↙']
-        ]
+        ],
     });
 });
 test('calculate look aheads case 1', t => {
@@ -586,7 +598,7 @@ test('calculate look aheads case 1', t => {
                 { type: GrammarlangLexer.TERMINAL, value: 'q' }
             ]
         ],
-
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
         'S': [
@@ -597,7 +609,7 @@ test('calculate look aheads case 1', t => {
             ['b'],
             ['c'],
             ['q']
-        ]
+        ],
     });
 });
 
@@ -634,7 +646,8 @@ test('calculate look aheads case 2', t => {
             [
                 { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
             ]
-        ]
+        ],
+        '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
         'S': [
@@ -650,6 +663,6 @@ test('calculate look aheads case 2', t => {
             ['a', 'b', 'x', 'y'],
             ['a', 'b', 'x', 'y'],
             ['a', 'b', 'x', 'y', '↙',]
-        ]
+        ],
     });
 });
