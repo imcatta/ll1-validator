@@ -147,7 +147,7 @@ function calculateFirstSets(grammar) {
     return firstSets;
 }
 
-function calculateFollowSetDipendencies(grammar) //First run for follow sets: gets non terminals and terminals next to each non terminal
+function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follow sets: gets non terminals and terminals next to each non terminal
 {
     var follow_nonTerminals = {}
     var follow_terminals = {}
@@ -202,17 +202,17 @@ function calculateFollowSetDipendencies(grammar) //First run for follow sets: ge
         });
 
     });
-    follow_terminals['S'][0].push("↙");
+    follow_terminals[axiom][0].push("↙");
     return {
         follow_nonTerminals: follow_nonTerminals,
         follow_terminals: follow_terminals
     }
 }
 
-function calculateFollowSets(grammar) {
+function calculateFollowSets(grammar,axiom) {
     var followsets = {}
-    const non_terminals = calculateFollowSetDipendencies(grammar).follow_nonTerminals;
-    const initial_followsets = calculateFollowSetDipendencies(grammar).follow_terminals;
+    const non_terminals = calculateFollowSetDipendencies(grammar,axiom).follow_nonTerminals;
+    const initial_followsets = calculateFollowSetDipendencies(grammar,axiom).follow_terminals;
     followsets = initial_followsets;
     var iteration = 0;
     var goahead = true;
