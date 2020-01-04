@@ -155,9 +155,12 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
         follow_nonTerminals[it] = [];
         follow_terminals[it] = [[]];
     });
+    console.log(axiom);
+    follow_terminals[axiom][0].push("↙");
     getNonTerminals(grammar).forEach(l => {
-        var pushNext = false;
+        
         getNonTerminals(grammar).forEach(f => {
+            var pushNext = false;
             grammar[f].forEach(r => {
                 var lastNT = undefined;
                 for (const item of r) {
@@ -202,15 +205,15 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
         });
 
     });
-    follow_terminals[axiom][0].push("↙");
     return {
         follow_nonTerminals: follow_nonTerminals,
         follow_terminals: follow_terminals
     }
 }
 
-function calculateFollowSets(grammar,axiom) {
+function calculateFollowSets(grammar) {
     var followsets = {}
+    const axiom= grammar._start_symbol
     const non_terminals = calculateFollowSetDipendencies(grammar,axiom).follow_nonTerminals;
     const initial_followsets = calculateFollowSetDipendencies(grammar,axiom).follow_terminals;
     followsets = initial_followsets;
@@ -233,6 +236,7 @@ function calculateFollowSets(grammar,axiom) {
         });
         goahead = isDifferent(followsets, iteration);
     } while (goahead);
+    console.log(followsets);
     return followsets;
 }
 
@@ -250,8 +254,9 @@ function isDifferent(obj, iter) {
 
 function calculateLookAheads(grammar) {
     var ret = {};
+    const axiom= grammar._start_symbol
     const firstSets = calculateFirstSets(grammar);
-    const followSets = calculateFollowSets(grammar);
+    const followSets = calculateFollowSets(grammar,axiom);
     const nullableRules = calculateNullables(grammar).nullableRules;
     getNonTerminals(grammar).forEach(l => {
         ret[l] = [];

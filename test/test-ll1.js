@@ -1,4 +1,5 @@
 import test from 'ava';
+import { grammarlangLexer } from '../grammarlang/grammarlangLexer';
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const ll1 = require('../src/ll1');
 
@@ -571,6 +572,76 @@ test('calculate follow sets case 2', t => {
         ],
     });
 });
+test('calculate follow sets case 3', t => {
+    const grammar = {
+        'P':[
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'S' }]
+        ],
+        'S': [
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
+        ],
+        'A': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            ],
+            []
+        ],
+        'Z': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'y' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ]
+        ],
+        '_start_symbol': 'P',
+    };
+    t.deepEqual(ll1.calculateFollowSets(grammar), {
+        'P':[
+            ['↙'],
+            ['↙'],
+            ['↙'],
+            ['↙'],
+            ['↙']
+        ],
+        'S': [
+            [],
+            ['x', 'y', '↙',],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
+        ],
+        'A': [
+            ['a', 'b'],
+            ['a', 'b'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
+        ],
+        'Z': [
+            ['x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
+        ],
+    });
+});
 test('calculate look aheads case 1', t => {
     const grammar = {
         'S': [
@@ -650,6 +721,66 @@ test('calculate look aheads case 2', t => {
         '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
+        'S': [
+            ['a', 'b', 'x', 'y', '↙']
+        ],
+        'A': [
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y', '↙'],
+            ['a', 'b', 'x', 'y', '↙']
+        ],
+        'Z': [
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y'],
+            ['a', 'b', 'x', 'y', '↙',]
+        ],
+    });
+});
+
+test('calculate look aheads case 3', t => {
+    const grammar = {
+        'P': [
+            [{type:grammarlangLexer.NONTERMINAL, value:'S'}]
+        ],
+        'S': [
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
+        ],
+        'A': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            ],
+            []
+        ],
+        'Z': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'y' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ]
+        ],
+        '_start_symbol': 'P',
+    };
+    t.deepEqual(ll1.calculateLookAheads(grammar), {
+        'P':[
+            ['a', 'b', 'x', 'y', '↙']
+        ],
         'S': [
             ['a', 'b', 'x', 'y', '↙']
         ],
