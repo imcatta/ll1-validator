@@ -155,7 +155,6 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
         follow_nonTerminals[it] = [];
         follow_terminals[it] = [[]];
     });
-    console.log(axiom);
     follow_terminals[axiom][0].push("↙");
     getNonTerminals(grammar).forEach(l => {
         
@@ -236,7 +235,6 @@ function calculateFollowSets(grammar) {
         });
         goahead = isDifferent(followsets, iteration);
     } while (goahead);
-    console.log(followsets);
     return followsets;
 }
 
