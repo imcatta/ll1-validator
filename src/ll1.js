@@ -278,6 +278,50 @@ function calculateLookAheads(grammar) {
     return ret;
 }
 
+function isLL1(grammar){
+    const lookaheads= calculateLookAheads(grammar);
+    var res=true;
+    Object.keys(lookaheads).forEach(l =>{
+        const conf=calculateConflicts(l,grammar,lookaheads).length;
+        if(conf>0){
+            res= false;
+            
+        }
+    });
+    return res;
+}
+
+function calculateConflicts(nonTerminal,grammar=[],lookaheads=[]){ //grammar and/or followsets MUST BE passed
+    var terminals =[];
+    var ret=[];
+    if (lookaheads==[]){
+        lookaheads=calculateLookAheads(grammar);
+    }
+    lookaheads[nonTerminal].forEach(r=>{
+    r.forEach(t=>{
+        if(terminals.includes(t)){
+            if(!ret.includes(t))
+                ret.push(t);
+        }
+        else{
+            terminals.push(t);
+        }
+        });
+    });
+    return ret;
+}
+
+function calculateAllConflicts(grammar){
+    const lookaheads= calculateLookAheads(grammar);
+    var res={};
+    Object.keys(lookaheads).forEach(l =>{
+        const conf=calculateConflicts(l,grammar,lookaheads);
+        res[l]=conf.slice();
+    });
+    return res;
+}
+
+
 module.exports.calculateNullables = calculateNullables;
 module.exports.initializeFirstSets = initializeFirstSets;
 module.exports.calculateFirstSetsDependencies = calculateFirstSetsDependencies;
@@ -285,3 +329,6 @@ module.exports.calculateFirstSets = calculateFirstSets;
 module.exports.calculateFollowSets = calculateFollowSets;
 module.exports.calculateFollowSetDipendencies = calculateFollowSetDipendencies;
 module.exports.calculateLookAheads = calculateLookAheads;
+module.exports.isLL1 = isLL1;
+module.exports.calculateConflicts = calculateConflicts;
+module.exports.calculateAllConflicts= calculateAllConflicts;

@@ -797,3 +797,117 @@ test('calculate look aheads case 3', t => {
         ],
     });
 });
+test('calculate LL1 case 1', t => {
+    const grammar = {
+        'S': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
+            ]
+        ],
+        'T': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'a' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'c' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
+                { type: GrammarlangLexer.TERMINAL, value: 'c' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'q' }
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.isLL1(grammar), true);
+});
+
+test('calculate LL1 case 2', t => {
+    const grammar = {
+        'S': [
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
+        ],
+        'A': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            ],
+            []
+        ],
+        'Z': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'y' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.isLL1(grammar), false);
+});
+test('calculate conflicts case 1', t => {
+    const grammar = {
+        'S': [
+            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
+        ],
+        'A': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
+                { type: GrammarlangLexer.TERMINAL, value: 'b' },
+                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            ],
+            []
+        ],
+        'Z': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
+                { type: GrammarlangLexer.TERMINAL, value: 'y' },
+                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.calculateAllConflicts(grammar),{
+        'S': [],
+        'A': 
+            ['a', 'b', 'x', 'y', '↙'],
+        'Z': 
+            ['a', 'b', 'x', 'y'],
+    } );
+});
