@@ -68,7 +68,7 @@ function newgrammar(g){
     firstset.value=ll1.calculateFirstSets(g);
     followset.value=ll1.calculateFollowSets(g);
     firstDependencies.value=ll1.calculateFirstSetsDependencies(g);
-    followDependencies.value=ll1.calculateFollowSetDependencies(g);
+    followDependencies.value=ll1.calculateFollowSetDependencies(g,g._start_symbol);
     conflictset=ll1.calculateAllConflicts(g);
     isLL1.value=ll1.isLL1(g);
 }
