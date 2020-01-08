@@ -642,6 +642,74 @@ test('calculate follow sets case 3', t => {
         ],
     });
 });
+test('calculate follow sets case 4', t => {
+    const grammar = {
+        'S': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                { type: GrammarlangLexer.TERMINAL, value: 'i' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+            ],
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                { type: GrammarlangLexer.TERMINAL, value: 'i' }
+            ]
+        ],
+        'R': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'd' },
+                { type: GrammarlangLexer.TERMINAL, value: 'i' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
+                { type: GrammarlangLexer.TERMINAL, value: 'v' }
+            ]
+        ],
+        'L': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'd' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'X' }
+            ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'n' }
+            ]
+        ],
+        'X': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'X' },
+                { type: GrammarlangLexer.TERMINAL, value: 'n' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            ],
+            [
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.calculateFollowSets(grammar), {
+        'S': [
+            ['↙'],
+            ['↙'],
+            ['↙'],
+            ['↙']
+        ],
+        'R': [
+            ['i'],
+            ['i', 'n'],
+            ['i', 'n', 'v'],
+            ['i', 'n', 'v']
+        ],
+        'L': [
+            ['v'],
+            ['v'],
+            ['v'],
+            ['v']
+        ],
+        'X':[
+            ['n'],
+            ['n','v'],
+            ['n','v'],
+            ['n','v']
+        ]
+    });
+});
 test('calculate look aheads case 1', t => {
     const grammar = {
         'S': [

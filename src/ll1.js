@@ -147,7 +147,7 @@ function calculateFirstSets(grammar) {
     return firstSets;
 }
 
-function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follow sets: gets non terminals and terminals next to each non terminal
+function calculateFollowSetDependencies(grammar,axiom='S') //First run for follow sets: gets non terminals and terminals next to each non terminal
 {
     var follow_nonTerminals = {}
     var follow_terminals = {}
@@ -157,11 +157,10 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
     });
     follow_terminals[axiom][0].push("↙");
     getNonTerminals(grammar).forEach(l => {
-        
         getNonTerminals(grammar).forEach(f => {
-            var pushNext = false;
             grammar[f].forEach(r => {
-                var lastNT = undefined;
+                var pushNext = false; //if true, the item that comes next is in the follow set of l
+                //var lastNT = undefined;
                 for (const item of r) {
                     if (pushNext) {
                         if (item.type === GrammarlangLexer.NONTERMINAL) {
@@ -169,8 +168,9 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
                             tmp_itemInits.forEach(x => {
                                 const tmp_follows = x[0];
                                 tmp_follows.forEach(t => {
-                                    if (!follow_terminals[l][0].includes(t))
-                                        follow_terminals[l][0].push(t);
+                                    if (!follow_terminals[l][0].includes(t)){
+                                        follow_terminals[l][0].push(t);                                        
+                                    }
                                 });
                             });
 
@@ -186,23 +186,23 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
                     if (item.value === l) {
                         pushNext = true;
                     }
-                    if (item.type === GrammarlangLexer.NONTERMINAL) {
+                    //duplicated control - TO DELETE
+                    /*if (item.type === GrammarlangLexer.NONTERMINAL) {
                         lastNT = item.value;
                     } else {
                         lastNT = undefined;
-                    }
+                    }*/
                 }
                 if (pushNext) {
                     if (!follow_nonTerminals[l].includes(f))
                         follow_nonTerminals[l].push(f); //if I find l at the end, f's follows are inherited
                 }
-                if (lastNT) {
+                /*if (lastNT) {
                     if (!follow_nonTerminals[lastNT].includes(f))
                         follow_nonTerminals[lastNT].push(f);
-                }
+                }*/
             });
         });
-
     });
     return {
         follow_nonTerminals: follow_nonTerminals,
@@ -213,8 +213,8 @@ function calculateFollowSetDipendencies(grammar,axiom='S') //First run for follo
 function calculateFollowSets(grammar) {
     var followsets = {}
     const axiom= grammar._start_symbol
-    const non_terminals = calculateFollowSetDipendencies(grammar,axiom).follow_nonTerminals;
-    const initial_followsets = calculateFollowSetDipendencies(grammar,axiom).follow_terminals;
+    const non_terminals = calculateFollowSetDependencies(grammar,axiom).follow_nonTerminals;
+    const initial_followsets = calculateFollowSetDependencies(grammar,axiom).follow_terminals;
     followsets = initial_followsets;
     var iteration = 0;
     var goahead = true;
@@ -327,7 +327,7 @@ module.exports.initializeFirstSets = initializeFirstSets;
 module.exports.calculateFirstSetsDependencies = calculateFirstSetsDependencies;
 module.exports.calculateFirstSets = calculateFirstSets;
 module.exports.calculateFollowSets = calculateFollowSets;
-module.exports.calculateFollowSetDipendencies = calculateFollowSetDipendencies;
+module.exports.calculateFollowSetDependencies = calculateFollowSetDependencies;
 module.exports.calculateLookAheads = calculateLookAheads;
 module.exports.isLL1 = isLL1;
 module.exports.calculateConflicts = calculateConflicts;
