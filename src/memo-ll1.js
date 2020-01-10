@@ -35,7 +35,7 @@ var lookahead={
 
 var isLL1={
     cache:undefined,
-    get value(g={}){
+    get value(){
         return this.cache;
     }
 };
