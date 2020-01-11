@@ -125,7 +125,62 @@ test('calculate nullables case 5', t => {
     });
 
 });
-
+test('calculate nullables case 6', t => {
+    const grammar = {
+        'S': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'SS' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
+            ]
+        ],
+        'SS':[
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
+                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+            ],
+            []
+        ],
+        'RULELIST': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' },
+            ],
+            []
+        ],
+        'RULE': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
+                { type: GrammarlangLexer.TERMINAL, value: 'assign' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+            ]
+        ],
+        'L': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' }
+            ]
+        ],
+        'R': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 't' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            ],
+            [
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.calculateNullables(grammar), {
+        nullableRules: { S: [false], SS: [false, true], RULELIST:[false,true], RULE:[false],L:[false],R:[false,false,true] },
+        nullableNonTerminals: { S: false, SS: true ,RULELIST:true,RULE:false,L:false,R:true} 
+    });
+});
 test('initialize first sets case 1', t => {
     const grammar = {
         'S': [
@@ -710,6 +765,91 @@ test('calculate follow sets case 4', t => {
         ]
     });
 });
+test('calculate follow sets case 5', t => {
+    const grammar = {
+        'S': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'SS' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
+            ]
+        ],
+        'SS':[
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
+                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+            ],
+            []
+        ],
+        'RULELIST': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' },
+            ],
+            []
+        ],
+        'RULE': [
+            [
+                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
+                { type: GrammarlangLexer.TERMINAL, value: 'assign' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+            ]
+        ],
+        'L': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' }
+            ]
+        ],
+        'R': [
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+                ],
+            [
+                { type: GrammarlangLexer.TERMINAL, value: 't' },
+                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            ],
+            [
+            ]
+        ],
+        '_start_symbol': 'S',
+    };
+    t.deepEqual(ll1.calculateFollowSets(grammar), {
+        'S': [
+            ['↙'],
+            ['↙'],
+            ['↙']
+        ],
+        'SS':[
+            ['nt'],
+            ['nt'],
+            ['nt']
+        ], 
+        'RULELIST': [
+            [],
+            ['↙'],
+            ['↙']
+        ],
+        'RULE':[
+            ['nt'],
+            ['nt','↙'],
+            ['nt','↙']
+        ],
+        'L': [
+            ['assign'],
+            ['assign'],
+            ['assign']
+        ],
+        'R':[
+            ['semicolon'],
+            ['semicolon'],
+            ['semicolon']
+        ]
+    });
+});
+
 test('calculate look aheads case 1', t => {
     const grammar = {
         'S': [

@@ -166,7 +166,7 @@ function calculateFollowSetDependencies(grammar,axiom='S') //First run for follo
                         if (item.type === GrammarlangLexer.NONTERMINAL) {
                             const tmp_itemInits = calculateFirstSets(grammar)[item.value];
                             tmp_itemInits.forEach(x => {
-                                const tmp_follows = x[0];
+                                const tmp_follows = x[x.length-1];
                                 tmp_follows.forEach(t => {
                                     if (!follow_terminals[l][0].includes(t)){
                                         follow_terminals[l][0].push(t);                                        
@@ -174,8 +174,9 @@ function calculateFollowSetDependencies(grammar,axiom='S') //First run for follo
                                 });
                             });
 
-                            if (calculateNullables(grammar)[item.value] === false)
+                            if (calculateNullables(grammar).nullableNonTerminals[item.value] === false){
                                 pushNext = false;
+                            }
                         }
                         else if (item.type === GrammarlangLexer.TERMINAL) {
                             if (!follow_terminals[l][0].includes(item.value))
