@@ -108,7 +108,6 @@ function calculateFirstSetsDependencies(grammar) {
     return result;
 }
 
-// TODO use memoization
 function getAggregateFirstSet(set, nonTerminal, index) {
     const result = new Set();
     set[nonTerminal].forEach(item => {
@@ -147,7 +146,7 @@ function calculateFirstSets(grammar) {
     return firstSets;
 }
 
-function calculateFollowSetDependencies(grammar,axiom='S') //First run for follow sets: gets non terminals and terminals next to each non terminal
+function calculateFollowSetDependencies(grammar, axiom = 'S') //First run for follow sets: gets non terminals and terminals next to each non terminal
 {
     var follow_nonTerminals = {}
     var follow_terminals = {}
@@ -166,15 +165,15 @@ function calculateFollowSetDependencies(grammar,axiom='S') //First run for follo
                         if (item.type === GrammarlangLexer.NONTERMINAL) {
                             const tmp_itemInits = calculateFirstSets(grammar)[item.value];
                             tmp_itemInits.forEach(x => {
-                                const tmp_follows = x[x.length-1];
+                                const tmp_follows = x[x.length - 1];
                                 tmp_follows.forEach(t => {
-                                    if (!follow_terminals[l][0].includes(t)){
-                                        follow_terminals[l][0].push(t);                                        
+                                    if (!follow_terminals[l][0].includes(t)) {
+                                        follow_terminals[l][0].push(t);
                                     }
                                 });
                             });
 
-                            if (calculateNullables(grammar).nullableNonTerminals[item.value] === false){
+                            if (calculateNullables(grammar).nullableNonTerminals[item.value] === false) {
                                 pushNext = false;
                             }
                         }
@@ -213,9 +212,9 @@ function calculateFollowSetDependencies(grammar,axiom='S') //First run for follo
 
 function calculateFollowSets(grammar) {
     var followsets = {}
-    const axiom= grammar._start_symbol
-    const non_terminals = calculateFollowSetDependencies(grammar,axiom).follow_nonTerminals;
-    const initial_followsets = calculateFollowSetDependencies(grammar,axiom).follow_terminals;
+    const axiom = grammar._start_symbol
+    const non_terminals = calculateFollowSetDependencies(grammar, axiom).follow_nonTerminals;
+    const initial_followsets = calculateFollowSetDependencies(grammar, axiom).follow_terminals;
     followsets = initial_followsets;
     var iteration = 0;
     var goahead = true;
@@ -253,9 +252,9 @@ function isDifferent(obj, iter) {
 
 function calculateLookAheads(grammar) {
     var ret = {};
-    const axiom= grammar._start_symbol
+    const axiom = grammar._start_symbol
     const firstSets = calculateFirstSets(grammar);
-    const followSets = calculateFollowSets(grammar,axiom);
+    const followSets = calculateFollowSets(grammar, axiom);
     const nullableRules = calculateNullables(grammar).nullableRules;
     getNonTerminals(grammar).forEach(l => {
         ret[l] = [];
@@ -279,45 +278,45 @@ function calculateLookAheads(grammar) {
     return ret;
 }
 
-function isLL1(grammar){
-    const lookaheads= calculateLookAheads(grammar);
-    var res=true;
-    Object.keys(lookaheads).forEach(l =>{
-        const conf=calculateConflicts(l,grammar,lookaheads).length;
-        if(conf>0){
-            res= false;
-            
+function isLL1(grammar) {
+    const lookaheads = calculateLookAheads(grammar);
+    var res = true;
+    Object.keys(lookaheads).forEach(l => {
+        const conf = calculateConflicts(l, grammar, lookaheads).length;
+        if (conf > 0) {
+            res = false;
+
         }
     });
     return res;
 }
 
-function calculateConflicts(nonTerminal,grammar=[],lookaheads=[]){ //grammar and/or followsets MUST BE passed
-    var terminals =[];
-    var ret=[];
-    if (lookaheads==[]){
-        lookaheads=calculateLookAheads(grammar);
+function calculateConflicts(nonTerminal, grammar = [], lookaheads = []) { //grammar and/or followsets MUST BE passed
+    var terminals = [];
+    var ret = [];
+    if (lookaheads == []) {
+        lookaheads = calculateLookAheads(grammar);
     }
-    lookaheads[nonTerminal].forEach(r=>{
-    r.forEach(t=>{
-        if(terminals.includes(t)){
-            if(!ret.includes(t))
-                ret.push(t);
-        }
-        else{
-            terminals.push(t);
-        }
+    lookaheads[nonTerminal].forEach(r => {
+        r.forEach(t => {
+            if (terminals.includes(t)) {
+                if (!ret.includes(t))
+                    ret.push(t);
+            }
+            else {
+                terminals.push(t);
+            }
         });
     });
     return ret;
 }
 
-function calculateAllConflicts(grammar){
-    const lookaheads= calculateLookAheads(grammar);
-    var res={};
-    Object.keys(lookaheads).forEach(l =>{
-        const conf=calculateConflicts(l,grammar,lookaheads);
-        res[l]=conf.slice();
+function calculateAllConflicts(grammar) {
+    const lookaheads = calculateLookAheads(grammar);
+    var res = {};
+    Object.keys(lookaheads).forEach(l => {
+        const conf = calculateConflicts(l, grammar, lookaheads);
+        res[l] = conf.slice();
     });
     return res;
 }
@@ -332,4 +331,4 @@ module.exports.calculateFollowSetDependencies = calculateFollowSetDependencies;
 module.exports.calculateLookAheads = calculateLookAheads;
 module.exports.isLL1 = isLL1;
 module.exports.calculateConflicts = calculateConflicts;
-module.exports.calculateAllConflicts= calculateAllConflicts;
+module.exports.calculateAllConflicts = calculateAllConflicts;

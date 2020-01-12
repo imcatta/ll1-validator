@@ -134,7 +134,7 @@ test('calculate nullables case 6', t => {
                 { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
             ]
         ],
-        'SS':[
+        'SS': [
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
                 { type: GrammarlangLexer.TERMINAL, value: 'nt' },
@@ -166,7 +166,7 @@ test('calculate nullables case 6', t => {
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'nt' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                ],
+            ],
             [
                 { type: GrammarlangLexer.TERMINAL, value: 't' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
@@ -177,8 +177,8 @@ test('calculate nullables case 6', t => {
         '_start_symbol': 'S',
     };
     t.deepEqual(ll1.calculateNullables(grammar), {
-        nullableRules: { S: [false], SS: [false, true], RULELIST:[false,true], RULE:[false],L:[false],R:[false,false,true] },
-        nullableNonTerminals: { S: false, SS: true ,RULELIST:true,RULE:false,L:false,R:true} 
+        nullableRules: { S: [false], SS: [false, true], RULELIST: [false, true], RULE: [false], L: [false], R: [false, false, true] },
+        nullableNonTerminals: { S: false, SS: true, RULELIST: true, RULE: false, L: false, R: true }
     });
 });
 test('initialize first sets case 1', t => {
@@ -629,7 +629,7 @@ test('calculate follow sets case 2', t => {
 });
 test('calculate follow sets case 3', t => {
     const grammar = {
-        'P':[
+        'P': [
             [{ type: GrammarlangLexer.NONTERMINAL, value: 'S' }]
         ],
         'S': [
@@ -667,7 +667,7 @@ test('calculate follow sets case 3', t => {
         '_start_symbol': 'P',
     };
     t.deepEqual(ll1.calculateFollowSets(grammar), {
-        'P':[
+        'P': [
             ['↙'],
             ['↙'],
             ['↙'],
@@ -757,11 +757,11 @@ test('calculate follow sets case 4', t => {
             ['v'],
             ['v']
         ],
-        'X':[
+        'X': [
             ['n'],
-            ['n','v'],
-            ['n','v'],
-            ['n','v']
+            ['n', 'v'],
+            ['n', 'v'],
+            ['n', 'v']
         ]
     });
 });
@@ -774,7 +774,7 @@ test('calculate follow sets case 5', t => {
                 { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
             ]
         ],
-        'SS':[
+        'SS': [
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
                 { type: GrammarlangLexer.TERMINAL, value: 'nt' },
@@ -806,7 +806,7 @@ test('calculate follow sets case 5', t => {
             [
                 { type: GrammarlangLexer.TERMINAL, value: 'nt' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                ],
+            ],
             [
                 { type: GrammarlangLexer.TERMINAL, value: 't' },
                 { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
@@ -822,27 +822,27 @@ test('calculate follow sets case 5', t => {
             ['↙'],
             ['↙']
         ],
-        'SS':[
+        'SS': [
             ['nt'],
             ['nt'],
             ['nt']
-        ], 
+        ],
         'RULELIST': [
             [],
             ['↙'],
             ['↙']
         ],
-        'RULE':[
+        'RULE': [
             ['nt'],
-            ['nt','↙'],
-            ['nt','↙']
+            ['nt', '↙'],
+            ['nt', '↙']
         ],
         'L': [
             ['assign'],
             ['assign'],
             ['assign']
         ],
-        'R':[
+        'R': [
             ['semicolon'],
             ['semicolon'],
             ['semicolon']
@@ -949,7 +949,7 @@ test('calculate look aheads case 2', t => {
 test('calculate look aheads case 3', t => {
     const grammar = {
         'P': [
-            [{type:grammarlangLexer.NONTERMINAL, value:'S'}]
+            [{ type: grammarlangLexer.NONTERMINAL, value: 'S' }]
         ],
         'S': [
             [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
@@ -986,7 +986,7 @@ test('calculate look aheads case 3', t => {
         '_start_symbol': 'P',
     };
     t.deepEqual(ll1.calculateLookAheads(grammar), {
-        'P':[
+        'P': [
             ['a', 'b', 'x', 'y', '↙']
         ],
         'S': [
@@ -1111,11 +1111,11 @@ test('calculate conflicts case 1', t => {
         ],
         '_start_symbol': 'S',
     };
-    t.deepEqual(ll1.calculateAllConflicts(grammar),{
+    t.deepEqual(ll1.calculateAllConflicts(grammar), {
         'S': [],
-        'A': 
+        'A':
             ['a', 'b', 'x', 'y', '↙'],
-        'Z': 
+        'Z':
             ['a', 'b', 'x', 'y'],
-    } );
+    });
 });
