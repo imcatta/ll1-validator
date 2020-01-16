@@ -1,7 +1,7 @@
 const antlr4 = require('antlr4');
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const GrammarlangParser = require('../grammarlang/grammarlangParser').grammarlangParser;
-
+const errors = require('./errors');
 
 class Visitor {
   visitChildren(ctx) {
@@ -59,11 +59,29 @@ class Visitor {
   }
 }
 
+class LexerErrorListener extends antlr4.error.ErrorListener {
+  syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+    throw new errors.LexerError(`[${line}:${column}] ${msg}`);
+  }
+}
+class ParserErrorListener extends antlr4.error.ErrorListener {
+  syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+    throw new errors.ParserError(`[${line}:${column}] ${msg}`);
+  }
+}
+
 module.exports.parseString = function (input) {
   const chars = new antlr4.InputStream(input);
+
   const lexer = new GrammarlangLexer(chars);
+  lexer.removeErrorListeners();
+  lexer.addErrorListener(new LexerErrorListener());
+
   const tokens = new antlr4.CommonTokenStream(lexer);
   const parser = new GrammarlangParser(tokens);
+  parser.removeErrorListeners();
+  parser.addErrorListener(new ParserErrorListener());
+
   parser.buildParseTrees = true;
   const tree = parser.rulelist();
   return tree.accept(new Visitor());
