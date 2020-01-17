@@ -1,6 +1,7 @@
 import test from 'ava';
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const parser = require('../src/parser.js');
+const errors = require('../src/errors');
 
 // test('empty string', t => {
 //     t.deepEqual(parser.parseString(''), {})
@@ -79,4 +80,22 @@ test('custom start symbol case', t => {
         ],
         '_start_symbol': 'D'
     })
+});
+
+test('lexer error case 1', t => {
+    const grammar = `_start_symbol D;\nS_ -> a S\n S -> ;\nD -> b S;\n`;
+    const f = () => parser.parseString(grammar);
+    t.throws(f, errors.LexerError);
+});
+
+test('parser error case 1', t => {
+    const grammar = `_start_symbol D;\nS -> a S\n S -> ;\nD -> b S;\n`;
+    const f = () => parser.parseString(grammar);
+    t.throws(f, errors.ParserError);
+});
+
+test('parser error case 2', t => {
+    const grammar = `S -> a S\n S -> ;\nD -> b S;\n /* unclosed comment`;
+    const f = () => parser.parseString(grammar);
+    t.throws(f, errors.ParserError);
 });
