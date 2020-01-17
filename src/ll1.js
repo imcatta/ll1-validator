@@ -1,7 +1,18 @@
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
+const errors = require('./errors');
 
 function getNonTerminals(grammar) {
     return Object.keys(grammar).filter(v => !v.startsWith('_'))
+}
+
+function getProductions(nonTerminals,grammar){
+    let count=0;
+    nonTerminals.forEach(l => {
+        grammar[l].forEach(rule => {
+            count++;
+        });
+    });
+    return count;
 }
 
 function calculateNullables(grammar) {
@@ -10,11 +21,21 @@ function calculateNullables(grammar) {
     const nullableRules = {};
     const nullableNonTerminals = {};
     let doLoop = true;
+    let remainingCycles = getProductions(nonTerminals,grammar);
     nonTerminals.forEach(l => nullableRules[l] = []);
 
 
     while (doLoop) {
+        if(remainingCycles<0){
+            let involvedNT=""
+            nonTerminals.forEach(l=>{
+                if (nullableNonTerminals[l] === undefined)
+                    involvedNT+= (involvedNT.length>=0?" and ":"") + l
+            });
+            throw new errors.ParserError(`Loop detected. The non terminals involved are ${involvedNT}`);
+        }
         doLoop = false;
+        remainingCycles-=1;
 
         nonTerminals.forEach(l => {
             grammar[l].forEach((rule, index) => {
