@@ -3,6 +3,7 @@ const parser = require('./parser');
 
 const validate = (grammarString) => {
     const parsedValue = parser.parseString(grammarString);
+    const nullables = ll1.calculateNullables(parsedValue);
     const firstSets = ll1.calculateFirstSets(parsedValue);
     const followSets = ll1.calculateFollowSets(parsedValue);
     const firstSetsDependencies = ll1.calculateFirstSetsDependencies(parsedValue);
@@ -13,6 +14,7 @@ const validate = (grammarString) => {
 
     return {
         ...parsedValue,
+        ...nullables,
         firstSets,
         followSets,
         firstSetsDependencies,
