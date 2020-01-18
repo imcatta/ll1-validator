@@ -13,12 +13,16 @@ function calculateNullables(input) {
 
     while (doLoop) {
         if (remainingCycles < 0) {
-            let involvedNT = ""
+            let involvedNT = [];
             nonTerminals.forEach(l => {
-                if (nullableNonTerminals[l] === undefined)
-                    involvedNT += (involvedNT.length >= 0 ? " and " : "") + l
+                nullableRules[l].forEach((rule, index) => {
+                    if (rule === undefined) {
+                        const ruleString = grammar[l][index].map(v => v.value).join(' ');
+                        involvedNT.push(`[${l} -> ${ruleString}]`);
+                    }
+                });
             });
-            throw new errors.ParserError(`Loop detected. The non terminals involved are ${involvedNT}`);
+            throw new errors.ParserError(`Loop detected: ${involvedNT.sort().join(', ')}`);
         }
         doLoop = false;
         remainingCycles -= 1;
