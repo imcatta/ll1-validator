@@ -152,9 +152,10 @@ function calculateFirstSets(input) {
     return firstSets;
 }
 
-function calculateFollowSetDependencies(input, axiom = 'S') //First run for follow sets: gets non terminals and terminals next to each non terminal
+function calculateFollowSetDependencies(input) //First run for follow sets: gets non terminals and terminals next to each non terminal
 {
     const grammar = input.grammar;
+    const axiom = input.startSymbol;
     var follow_nonTerminals = {}
     var follow_terminals = {}
     input.nonTerminals.forEach(it => {
@@ -210,7 +211,7 @@ function calculateFollowSetDependencies(input, axiom = 'S') //First run for foll
 function calculateFollowSets(input) {
     var followsets = {}
     const axiom = input.startSymbol;
-    const followSetsDep = calculateFollowSetDependencies(input, axiom)
+    const followSetsDep = calculateFollowSetDependencies(input)
     const non_terminals = followSetsDep.follow_nonTerminals;
     const initial_followsets = followSetsDep.follow_terminals;
     followsets = initial_followsets;
