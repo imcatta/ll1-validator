@@ -3,6 +3,10 @@ const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangL
 const GrammarlangParser = require('../grammarlang/grammarlangParser').grammarlangParser;
 const errors = require('./errors');
 
+const NONTERMINAL = 0;
+const TERMINAL = 1;
+
+
 class Visitor {
   visitChildren(ctx) {
     return this.visitRuleList(ctx);
@@ -10,27 +14,64 @@ class Visitor {
 
   visitRuleList(ctx) {
     const rules = [];
-    let _start_symbol = 'S';
+    const nonTerminals = new Set();
+    let startSymbol = undefined;
+    let rulesNumber = 0;
+
     ctx.children.forEach(child => {
-      if (child.constructor.name === 'Rule_Context') {
-        rules.push(this.visitRule(child))
-      } else if (child.constructor.name === 'Start_symbolContext') {
-        _start_symbol = this.visitStartSymbol(child);
+      if (child.constructor.name === 'Start_symbolContext') {
+        startSymbol = this.visitStartSymbol(child);
+
+      } else if (child.constructor.name === 'Rule_Context') {
+        rulesNumber++;
+        const rule = this.visitRule(child)
+        rules.push(rule);
+        nonTerminals.add(rule.l);
+        if (!startSymbol) {
+          startSymbol = rule.l;
+        }
       }
     });
 
-    const result = { _start_symbol };
+    if (startSymbol === undefined) {
+      throw new Error('Fatal error');
+    }
+    if (!nonTerminals.has(startSymbol)) {
+      throw new errors.StartSymbolNotFound(
+        `At least one production from the start symbol '${startSymbol}' is required`);
+    }
+
+    const grammar = {};
+    const terminals = new Set();
+
     rules.forEach(rule => {
-      const tmp = result[rule.l] || [];
-      tmp.push(rule.r);
-      result[rule.l] = tmp;
+      const items = [];
+
+      rule.r.forEach(symbol => {
+        const type = nonTerminals.has(symbol) ? NONTERMINAL : TERMINAL;
+        items.push({ type, value: symbol });
+        if (type === TERMINAL) {
+          terminals.add(symbol);
+        }
+      });
+
+      const tmp = grammar[rule.l] || [];
+      tmp.push(items);
+      grammar[rule.l] = tmp;
     });
-    return result;
+
+    return {
+      grammar,
+      startSymbol,
+      rulesNumber,
+      terminals: Array.from(terminals).sort(),
+      nonTerminals: Array.from(nonTerminals).sort()
+    };
   }
 
   visitStartSymbol(ctx) {
     return ctx.children
-      .find(child => child.symbol.type === GrammarlangParser.NONTERMINAL)
+      .find(child => child.symbol.type === GrammarlangParser.SYMBOL)
       .getText();
   }
 
@@ -52,10 +93,7 @@ class Visitor {
   }
 
   visitR(ctx) {
-    return ctx.children.map(child => ({
-      type: child.symbol.type,
-      value: child.getText()
-    }));
+    return ctx.children.map(child => child.getText());
   }
 }
 
@@ -70,7 +108,7 @@ class ParserErrorListener extends antlr4.error.ErrorListener {
   }
 }
 
-module.exports.parseString = function (input) {
+const parseString = (input) => {
   const chars = new antlr4.InputStream(input);
 
   const lexer = new GrammarlangLexer(chars);
@@ -86,3 +124,5 @@ module.exports.parseString = function (input) {
   const tree = parser.rulelist();
   return tree.accept(new Visitor());
 }
+
+module.exports = Object.freeze({ NONTERMINAL, TERMINAL, parseString });

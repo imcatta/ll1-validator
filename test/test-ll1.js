@@ -1,19 +1,23 @@
 import test from 'ava';
-import { grammarlangLexer } from '../grammarlang/grammarlangLexer';
-const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
+const parser = require('../src/parser');
 const ll1 = require('../src/ll1');
 
 test('calculate nullables case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 1,
+        terminals: ['a'],
+        nonTerminals: ['S'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false] },
         nullableNonTerminals: { S: false }
     });
@@ -21,17 +25,22 @@ test('calculate nullables case 1', t => {
 
 
 test('calculate nullables case 2', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                []
             ],
-            []
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 2,
+        terminals: ['a'],
+        nonTerminals: ['S'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false, true] },
         nullableNonTerminals: { S: true }
     });
@@ -39,246 +48,287 @@ test('calculate nullables case 2', t => {
 
 
 test('calculate nullables case 3', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'D' }]
-        ],
-        'D': [
-            []
-        ],
-        '_start_symbol': 'S',
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'D' }]
+            ],
+            'D': [
+                []
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: [],
+        nonTerminals: ['D', 'S'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [true], D: [true] },
         nullableNonTerminals: { S: true, D: true }
     });
 });
 
 test('calculate nullables case 4', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'D' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                []
             ],
-            []
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'E' }
+            'D': [
+                [
+                    { type: parser.NONTERMINAL, value: 'D' },
+                    { type: parser.NONTERMINAL, value: 'E' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'E' },
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
+            'E': [
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'E' },
-            ]
-        ],
-        'E': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-            ],
-            []
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 7,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'E', 'S'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [true, true], D: [true, false, true], E: [false, true] },
         nullableNonTerminals: { S: true, D: true, E: true }
     });
 });
 
 test('calculate nullables case 5', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
-            ]
-        ],
-        'T': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'T' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            'T': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'b' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'c' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'c' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'q' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'c' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'c' }
-            ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'q' }
-            ]
-        ],
-        '_start_symbol': 'S',
-
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['a', 'b', 'c', 'q'],
+        nonTerminals: ['S', 'T'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false], T: [false, false, false, false] },
         nullableNonTerminals: { S: false, T: false }
     });
-
 });
+
 test('calculate nullables case 6', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'SS' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
-            ]
-        ],
-        'SS': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
-                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'SS' },
+                    { type: parser.NONTERMINAL, value: 'RULE' },
+                    { type: parser.NONTERMINAL, value: 'RULELIST' }
+                ]
             ],
-            []
-        ],
-        'RULELIST': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' },
+            'SS': [
+                [
+                    { type: parser.TERMINAL, value: 'ssk' },
+                    { type: parser.TERMINAL, value: 'nt' },
+                    { type: parser.TERMINAL, value: 'semicolon' }
+                ],
+                []
             ],
-            []
-        ],
-        'RULE': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
-                { type: GrammarlangLexer.TERMINAL, value: 'assign' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
-            ]
-        ],
-        'L': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' }
-            ]
-        ],
-        'R': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+            'RULELIST': [
+                [
+                    { type: parser.NONTERMINAL, value: 'RULE' },
+                    { type: parser.NONTERMINAL, value: 'RULELIST' },
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 't' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            'RULE': [
+                [
+                    { type: parser.NONTERMINAL, value: 'L' },
+                    { type: parser.TERMINAL, value: 'assign' },
+                    { type: parser.NONTERMINAL, value: 'R' },
+                    { type: parser.TERMINAL, value: 'semicolon' }
+                ]
             ],
-            [
-            ]
-        ],
-        '_start_symbol': 'S',
+            'L': [
+                [
+                    { type: parser.TERMINAL, value: 'nt' }
+                ]
+            ],
+            'R': [
+                [
+                    { type: parser.TERMINAL, value: 'nt' },
+                    { type: parser.NONTERMINAL, value: 'R' },
+                ],
+                [
+                    { type: parser.TERMINAL, value: 't' },
+                    { type: parser.NONTERMINAL, value: 'R' }
+                ],
+                [
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 10,
+        terminals: ['nt', 'semicolon', 'ssk', 't'],
+        nonTerminals: ['L', 'S', 'R', 'RULE', 'RULELIST', 'S', 'SS'],
     };
-    t.deepEqual(ll1.calculateNullables(grammar), {
+    t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false], SS: [false, true], RULELIST: [false, true], RULE: [false], L: [false], R: [false, false, true] },
         nullableNonTerminals: { S: false, SS: true, RULELIST: true, RULE: false, L: false, R: true }
     });
 });
+
+
 test('initialize first sets case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 2,
+        terminals: ['a'],
+        nonTerminals: ['S'],
     };
-    t.deepEqual(ll1.initializeFirstSets(grammar), {
+    t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']]]
     });
 });
 
 test('initialize first sets case 2', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
-            ]
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
-            ]
-        ],
-        '_start_symbol': 'S',
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'S'],
     };
-    t.deepEqual(ll1.initializeFirstSets(grammar), {
+    t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']], [[]]],
         'D': [[['b']]]
     });
 });
 
 test('initialize first sets case 3', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
-            ]
-        ],
-        'D': [
-            []
-        ],
-        '_start_symbol': 'S',
+            'D': [
+                []
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: ['a'],
+        nonTerminals: ['D', 'S'],
     };
-    t.deepEqual(ll1.initializeFirstSets(grammar), {
+    t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']], [[]]],
         'D': [[[]]]
     });
 });
 
 test('initialize first sets case 4', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.initializeFirstSets(grammar), {
+    t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[[]]],
         'A': [
             [['a']],
@@ -294,60 +344,67 @@ test('initialize first sets case 4', t => {
     });
 });
 
-
-
 test('calculate first sets dependencies case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
-            ]
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
-            ]
-        ],
-        '_start_symbol': 'S',
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'S'],
     };
-    t.deepEqual(ll1.calculateFirstSetsDependencies(grammar), {
+    t.deepEqual(ll1.calculateFirstSetsDependencies(input), {
         'S': [new Set(), new Set(['D'])],
         'D': [new Set()]
     });
 });
 
-
 test('calculate first sets dependencies case 2', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'E' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'S' },
+                    { type: parser.NONTERMINAL, value: 'E' },
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
             ],
-            []
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
-            ]
-        ],
-        'E': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'c' }
+            'E': [
+                [
+                    { type: parser.TERMINAL, value: 'c' }
+                ],
+                []
             ],
-            []
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 6,
+        terminals: ['b', 'c'],
+        nonTerminals: ['D', 'E', 'S'],
     };
-    t.deepEqual(ll1.calculateFirstSetsDependencies(grammar), {
+    t.deepEqual(ll1.calculateFirstSetsDependencies(input), {
         'S': [new Set(['S', 'E', 'D']), new Set(['D']), new Set([])],
         'D': [new Set([])],
         'E': [new Set([]), new Set([])]
@@ -355,24 +412,29 @@ test('calculate first sets dependencies case 2', t => {
 });
 
 test('calculate first sets case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
-            ]
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
-            ]
-        ],
-        '_start_symbol': 'S',
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'S'],
     };
-    t.deepEqual(ll1.calculateFirstSets(grammar), {
+    t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
             [['a'], ['a'], ['a']],
             [[], ['b'], ['b']],
@@ -384,35 +446,40 @@ test('calculate first sets case 1', t => {
 });
 
 test('calculate first sets case 2', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'D' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                []
             ],
-            []
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'E' }
+            'D': [
+                [
+                    { type: parser.NONTERMINAL, value: 'D' },
+                    { type: parser.NONTERMINAL, value: 'E' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'E' },
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
+            'E': [
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'E' },
-            ]
-        ],
-        'E': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-            ],
-            []
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 7,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'E', 'S'],
     };
-    t.deepEqual(ll1.calculateFirstSets(grammar), {
+    t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
             [[], ['a'], ['a', 'b'], ['a', 'b']],
             [[], [], [], []]
@@ -431,42 +498,47 @@ test('calculate first sets case 2', t => {
 
 
 test('calculate first sets case 3', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateFirstSets(grammar), {
+    t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
             [
                 [],
@@ -529,35 +601,40 @@ test('calculate first sets case 3', t => {
 });
 
 test('calculate follow sets case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
-            ]
-        ],
-        'T': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'T' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            'T': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'b' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'c' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'c' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'q' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'c' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'c' }
-            ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'q' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['a', 'b', 'c', 'q'],
+        nonTerminals: ['S', 'T'],
     };
-    t.deepEqual(ll1.calculateFollowSets(grammar), {
+    t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
             ['↙'],
             ['↙'],
@@ -570,43 +647,49 @@ test('calculate follow sets case 1', t => {
         ],
     });
 });
+
 test('calculate follow sets case 2', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateFollowSets(grammar), {
+    t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
             ['↙'],
             ['x', 'y', '↙',],
@@ -627,46 +710,52 @@ test('calculate follow sets case 2', t => {
         ],
     });
 });
+
 test('calculate follow sets case 3', t => {
-    const grammar = {
-        'P': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'S' }]
-        ],
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'P': [
+                [{ type: parser.NONTERMINAL, value: 'S' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'P',
+        },
+        startSymbol: 'P',
+        rulesNumber: 9,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'P', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateFollowSets(grammar), {
+    t.deepEqual(ll1.calculateFollowSets(input), {
         'P': [
             ['↙'],
             ['↙'],
@@ -697,48 +786,54 @@ test('calculate follow sets case 3', t => {
         ],
     });
 });
+
 test('calculate follow sets case 4', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                { type: GrammarlangLexer.TERMINAL, value: 'i' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'R' },
+                    { type: parser.TERMINAL, value: 'i' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'R' },
+                    { type: parser.TERMINAL, value: 'i' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                { type: GrammarlangLexer.TERMINAL, value: 'i' }
-            ]
-        ],
-        'R': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'd' },
-                { type: GrammarlangLexer.TERMINAL, value: 'i' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
-                { type: GrammarlangLexer.TERMINAL, value: 'v' }
-            ]
-        ],
-        'L': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'd' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'X' }
+            'R': [
+                [
+                    { type: parser.TERMINAL, value: 'd' },
+                    { type: parser.TERMINAL, value: 'i' },
+                    { type: parser.NONTERMINAL, value: 'L' },
+                    { type: parser.TERMINAL, value: 'v' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'n' }
-            ]
-        ],
-        'X': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'X' },
-                { type: GrammarlangLexer.TERMINAL, value: 'n' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            'L': [
+                [
+                    { type: parser.TERMINAL, value: 'd' },
+                    { type: parser.NONTERMINAL, value: 'X' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'n' }
+                ]
             ],
-            [
-            ]
-        ],
-        '_start_symbol': 'S',
+            'X': [
+                [
+                    { type: parser.NONTERMINAL, value: 'X' },
+                    { type: parser.TERMINAL, value: 'n' },
+                    { type: parser.NONTERMINAL, value: 'R' }
+                ],
+                [
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 7,
+        terminals: ['d', 'i', 'n', 'v'],
+        nonTerminals: ['L', 'R', 'S', 'X'],
     };
-    t.deepEqual(ll1.calculateFollowSets(grammar), {
+    t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
             ['↙'],
             ['↙'],
@@ -765,58 +860,64 @@ test('calculate follow sets case 4', t => {
         ]
     });
 });
+
 test('calculate follow sets case 5', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'SS' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' }
-            ]
-        ],
-        'SS': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'ssk' },
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
-                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'SS' },
+                    { type: parser.NONTERMINAL, value: 'RULE' },
+                    { type: parser.NONTERMINAL, value: 'RULELIST' }
+                ]
             ],
-            []
-        ],
-        'RULELIST': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULE' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'RULELIST' },
+            'SS': [
+                [
+                    { type: parser.TERMINAL, value: 'ssk' },
+                    { type: parser.TERMINAL, value: 'nt' },
+                    { type: parser.TERMINAL, value: 'semicolon' }
+                ],
+                []
             ],
-            []
-        ],
-        'RULE': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'L' },
-                { type: GrammarlangLexer.TERMINAL, value: 'assign' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
-                { type: GrammarlangLexer.TERMINAL, value: 'semicolon' }
-            ]
-        ],
-        'L': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' }
-            ]
-        ],
-        'R': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'nt' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' },
+            'RULELIST': [
+                [
+                    { type: parser.NONTERMINAL, value: 'RULE' },
+                    { type: parser.NONTERMINAL, value: 'RULELIST' },
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 't' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'R' }
+            'RULE': [
+                [
+                    { type: parser.NONTERMINAL, value: 'L' },
+                    { type: parser.TERMINAL, value: 'assign' },
+                    { type: parser.NONTERMINAL, value: 'R' },
+                    { type: parser.TERMINAL, value: 'semicolon' }
+                ]
             ],
-            [
-            ]
-        ],
-        '_start_symbol': 'S',
+            'L': [
+                [
+                    { type: parser.TERMINAL, value: 'nt' }
+                ]
+            ],
+            'R': [
+                [
+                    { type: parser.TERMINAL, value: 'nt' },
+                    { type: parser.NONTERMINAL, value: 'R' },
+                ],
+                [
+                    { type: parser.TERMINAL, value: 't' },
+                    { type: parser.NONTERMINAL, value: 'R' }
+                ],
+                [
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 10,
+        terminals: ['nt', 'semicolon', 'ssk', 't'],
+        nonTerminals: ['L', 'S', 'R', 'RULE', 'RULELIST', 'S', 'SS'],
     };
-    t.deepEqual(ll1.calculateFollowSets(grammar), {
+    t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
             ['↙'],
             ['↙'],
@@ -851,35 +952,40 @@ test('calculate follow sets case 5', t => {
 });
 
 test('calculate look aheads case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
-            ]
-        ],
-        'T': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'T' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            'T': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'b' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'c' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'c' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'q' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'c' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'c' }
-            ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'q' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['a', 'b', 'c', 'q'],
+        nonTerminals: ['S', 'T'],
     };
-    t.deepEqual(ll1.calculateLookAheads(grammar), {
+    t.deepEqual(ll1.calculateLookAheads(input), {
         'S': [
             ['a', 'b', 'c', 'q']
         ],
@@ -893,42 +999,47 @@ test('calculate look aheads case 1', t => {
 });
 
 test('calculate look aheads case 2', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateLookAheads(grammar), {
+    t.deepEqual(ll1.calculateLookAheads(input), {
         'S': [
             ['a', 'b', 'x', 'y', '↙']
         ],
@@ -947,45 +1058,50 @@ test('calculate look aheads case 2', t => {
 });
 
 test('calculate look aheads case 3', t => {
-    const grammar = {
-        'P': [
-            [{ type: grammarlangLexer.NONTERMINAL, value: 'S' }]
-        ],
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'P': [
+                [{ type: parser.NONTERMINAL, value: 'S' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'P',
+        },
+        startSymbol: 'P',
+        rulesNumber: 9,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'P', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateLookAheads(grammar), {
+    t.deepEqual(ll1.calculateLookAheads(input), {
         'P': [
             ['a', 'b', 'x', 'y', '↙']
         ],
@@ -1005,113 +1121,130 @@ test('calculate look aheads case 3', t => {
         ],
     });
 });
+
 test('calculate LL1 case 1', t => {
-    const grammar = {
-        'S': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' }
-            ]
-        ],
-        'T': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'T' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
+            'T': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'b' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'c' },
+                    { type: parser.NONTERMINAL, value: 'T' },
+                    { type: parser.TERMINAL, value: 'c' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'q' }
+                ]
             ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'c' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'T' },
-                { type: GrammarlangLexer.TERMINAL, value: 'c' }
-            ],
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'q' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['a', 'b', 'c', 'q'],
+        nonTerminals: ['S', 'T'],
     };
-    t.deepEqual(ll1.isLL1(grammar), true);
+    t.deepEqual(ll1.isLL1(input), true);
 });
 
 test('calculate LL1 case 2', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.isLL1(grammar), false);
+    t.deepEqual(ll1.isLL1(input), false);
 });
+
 test('calculate conflicts case 1', t => {
-    const grammar = {
-        'S': [
-            [{ type: GrammarlangLexer.NONTERMINAL, value: 'A' }]
-        ],
-        'A': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+    const input = {
+        grammar: {
+            'S': [
+                [{ type: parser.NONTERMINAL, value: 'A' }]
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'A' },
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.TERMINAL, value: 'a' }
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' }
+                ],
+                []
             ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' }
+            'Z': [
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'Z' },
+                    { type: parser.TERMINAL, value: 'y' },
+                    { type: parser.TERMINAL, value: 'x' }
+                ],
+                [
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
             ],
-            []
-        ],
-        'Z': [
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'Z' },
-                { type: GrammarlangLexer.TERMINAL, value: 'y' },
-                { type: GrammarlangLexer.TERMINAL, value: 'x' }
-            ],
-            [
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S',
+        },
+        startSymbol: 'S',
+        rulesNumber: 8,
+        terminals: ['a', 'b', 'x', 'y'],
+        nonTerminals: ['A', 'S', 'Z'],
     };
-    t.deepEqual(ll1.calculateAllConflicts(grammar), {
+    t.deepEqual(ll1.calculateAllConflicts(input), {
         'S': [],
         'A':
             ['a', 'b', 'x', 'y', '↙'],

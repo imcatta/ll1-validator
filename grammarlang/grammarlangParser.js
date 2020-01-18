@@ -6,30 +6,30 @@ var grammarFileName = "grammarlang.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
-    "\u0003\t(\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t\u0004",
+    "\u0003\b(\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t\u0004",
     "\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0003\u0002\u0005\u0002\u000e",
     "\n\u0002\u0003\u0002\u0006\u0002\u0011\n\u0002\r\u0002\u000e\u0002\u0012",
     "\u0003\u0002\u0003\u0002\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003",
     "\u0003\u0004\u0003\u0004\u0003\u0004\u0003\u0004\u0003\u0004\u0003\u0005",
     "\u0003\u0005\u0003\u0006\u0007\u0006#\n\u0006\f\u0006\u000e\u0006&\u000b",
-    "\u0006\u0003\u0006\u0002\u0002\u0007\u0002\u0004\u0006\b\n\u0002\u0003",
-    "\u0003\u0002\u0006\u0007\u0002%\u0002\r\u0003\u0002\u0002\u0002\u0004",
-    "\u0016\u0003\u0002\u0002\u0002\u0006\u001a\u0003\u0002\u0002\u0002\b",
-    "\u001f\u0003\u0002\u0002\u0002\n$\u0003\u0002\u0002\u0002\f\u000e\u0005",
-    "\u0004\u0003\u0002\r\f\u0003\u0002\u0002\u0002\r\u000e\u0003\u0002\u0002",
-    "\u0002\u000e\u0010\u0003\u0002\u0002\u0002\u000f\u0011\u0005\u0006\u0004",
-    "\u0002\u0010\u000f\u0003\u0002\u0002\u0002\u0011\u0012\u0003\u0002\u0002",
-    "\u0002\u0012\u0010\u0003\u0002\u0002\u0002\u0012\u0013\u0003\u0002\u0002",
-    "\u0002\u0013\u0014\u0003\u0002\u0002\u0002\u0014\u0015\u0007\u0002\u0002",
-    "\u0003\u0015\u0003\u0003\u0002\u0002\u0002\u0016\u0017\u0007\u0003\u0002",
-    "\u0002\u0017\u0018\u0007\u0006\u0002\u0002\u0018\u0019\u0007\u0005\u0002",
-    "\u0002\u0019\u0005\u0003\u0002\u0002\u0002\u001a\u001b\u0005\b\u0005",
-    "\u0002\u001b\u001c\u0007\u0004\u0002\u0002\u001c\u001d\u0005\n\u0006",
-    "\u0002\u001d\u001e\u0007\u0005\u0002\u0002\u001e\u0007\u0003\u0002\u0002",
-    "\u0002\u001f \u0007\u0006\u0002\u0002 \t\u0003\u0002\u0002\u0002!#\t",
-    "\u0002\u0002\u0002\"!\u0003\u0002\u0002\u0002#&\u0003\u0002\u0002\u0002",
-    "$\"\u0003\u0002\u0002\u0002$%\u0003\u0002\u0002\u0002%\u000b\u0003\u0002",
-    "\u0002\u0002&$\u0003\u0002\u0002\u0002\u0005\r\u0012$"].join("");
+    "\u0006\u0003\u0006\u0002\u0002\u0007\u0002\u0004\u0006\b\n\u0002\u0002",
+    "\u0002%\u0002\r\u0003\u0002\u0002\u0002\u0004\u0016\u0003\u0002\u0002",
+    "\u0002\u0006\u001a\u0003\u0002\u0002\u0002\b\u001f\u0003\u0002\u0002",
+    "\u0002\n$\u0003\u0002\u0002\u0002\f\u000e\u0005\u0004\u0003\u0002\r",
+    "\f\u0003\u0002\u0002\u0002\r\u000e\u0003\u0002\u0002\u0002\u000e\u0010",
+    "\u0003\u0002\u0002\u0002\u000f\u0011\u0005\u0006\u0004\u0002\u0010\u000f",
+    "\u0003\u0002\u0002\u0002\u0011\u0012\u0003\u0002\u0002\u0002\u0012\u0010",
+    "\u0003\u0002\u0002\u0002\u0012\u0013\u0003\u0002\u0002\u0002\u0013\u0014",
+    "\u0003\u0002\u0002\u0002\u0014\u0015\u0007\u0002\u0002\u0003\u0015\u0003",
+    "\u0003\u0002\u0002\u0002\u0016\u0017\u0007\u0003\u0002\u0002\u0017\u0018",
+    "\u0007\u0006\u0002\u0002\u0018\u0019\u0007\u0005\u0002\u0002\u0019\u0005",
+    "\u0003\u0002\u0002\u0002\u001a\u001b\u0005\b\u0005\u0002\u001b\u001c",
+    "\u0007\u0004\u0002\u0002\u001c\u001d\u0005\n\u0006\u0002\u001d\u001e",
+    "\u0007\u0005\u0002\u0002\u001e\u0007\u0003\u0002\u0002\u0002\u001f ",
+    "\u0007\u0006\u0002\u0002 \t\u0003\u0002\u0002\u0002!#\u0007\u0006\u0002",
+    "\u0002\"!\u0003\u0002\u0002\u0002#&\u0003\u0002\u0002\u0002$\"\u0003",
+    "\u0002\u0002\u0002$%\u0003\u0002\u0002\u0002%\u000b\u0003\u0002\u0002",
+    "\u0002&$\u0003\u0002\u0002\u0002\u0005\r\u0012$"].join("");
 
 
 var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -38,10 +38,10 @@ var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new a
 
 var sharedContextCache = new antlr4.PredictionContextCache();
 
-var literalNames = [ null, "'_start_symbol'", "'->'", "';'" ];
+var literalNames = [ null, "'#start_symbol'", null, "';'" ];
 
 var symbolicNames = [ null, "START_SYMBOL_KEYWORD", "ASSIGN", "SEMICOLON", 
-                      "NONTERMINAL", "TERMINAL", "COMMENT", "WS" ];
+                      "SYMBOL", "COMMENT", "WS" ];
 
 var ruleNames =  [ "rulelist", "start_symbol", "rule_", "l", "r" ];
 
@@ -67,10 +67,9 @@ grammarlangParser.EOF = antlr4.Token.EOF;
 grammarlangParser.START_SYMBOL_KEYWORD = 1;
 grammarlangParser.ASSIGN = 2;
 grammarlangParser.SEMICOLON = 3;
-grammarlangParser.NONTERMINAL = 4;
-grammarlangParser.TERMINAL = 5;
-grammarlangParser.COMMENT = 6;
-grammarlangParser.WS = 7;
+grammarlangParser.SYMBOL = 4;
+grammarlangParser.COMMENT = 5;
+grammarlangParser.WS = 6;
 
 grammarlangParser.RULE_rulelist = 0;
 grammarlangParser.RULE_start_symbol = 1;
@@ -155,7 +154,7 @@ grammarlangParser.prototype.rulelist = function() {
             this.state = 16; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-        } while(_la===grammarlangParser.NONTERMINAL);
+        } while(_la===grammarlangParser.SYMBOL);
         this.state = 18;
         this.match(grammarlangParser.EOF);
     } catch (re) {
@@ -193,8 +192,8 @@ Start_symbolContext.prototype.START_SYMBOL_KEYWORD = function() {
     return this.getToken(grammarlangParser.START_SYMBOL_KEYWORD, 0);
 };
 
-Start_symbolContext.prototype.NONTERMINAL = function() {
-    return this.getToken(grammarlangParser.NONTERMINAL, 0);
+Start_symbolContext.prototype.SYMBOL = function() {
+    return this.getToken(grammarlangParser.SYMBOL, 0);
 };
 
 Start_symbolContext.prototype.SEMICOLON = function() {
@@ -227,7 +226,7 @@ grammarlangParser.prototype.start_symbol = function() {
         this.state = 20;
         this.match(grammarlangParser.START_SYMBOL_KEYWORD);
         this.state = 21;
-        this.match(grammarlangParser.NONTERMINAL);
+        this.match(grammarlangParser.SYMBOL);
         this.state = 22;
         this.match(grammarlangParser.SEMICOLON);
     } catch (re) {
@@ -339,8 +338,8 @@ function LContext(parser, parent, invokingState) {
 LContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 LContext.prototype.constructor = LContext;
 
-LContext.prototype.NONTERMINAL = function() {
-    return this.getToken(grammarlangParser.NONTERMINAL, 0);
+LContext.prototype.SYMBOL = function() {
+    return this.getToken(grammarlangParser.SYMBOL, 0);
 };
 
 LContext.prototype.enterRule = function(listener) {
@@ -367,7 +366,7 @@ grammarlangParser.prototype.l = function() {
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 29;
-        this.match(grammarlangParser.NONTERMINAL);
+        this.match(grammarlangParser.SYMBOL);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -399,26 +398,14 @@ function RContext(parser, parent, invokingState) {
 RContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 RContext.prototype.constructor = RContext;
 
-RContext.prototype.NONTERMINAL = function(i) {
+RContext.prototype.SYMBOL = function(i) {
 	if(i===undefined) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(grammarlangParser.NONTERMINAL);
+        return this.getTokens(grammarlangParser.SYMBOL);
     } else {
-        return this.getToken(grammarlangParser.NONTERMINAL, i);
-    }
-};
-
-
-RContext.prototype.TERMINAL = function(i) {
-	if(i===undefined) {
-		i = null;
-	}
-    if(i===null) {
-        return this.getTokens(grammarlangParser.TERMINAL);
-    } else {
-        return this.getToken(grammarlangParser.TERMINAL, i);
+        return this.getToken(grammarlangParser.SYMBOL, i);
     }
 };
 
@@ -450,16 +437,9 @@ grammarlangParser.prototype.r = function() {
         this.state = 34;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        while(_la===grammarlangParser.NONTERMINAL || _la===grammarlangParser.TERMINAL) {
+        while(_la===grammarlangParser.SYMBOL) {
             this.state = 31;
-            _la = this._input.LA(1);
-            if(!(_la===grammarlangParser.NONTERMINAL || _la===grammarlangParser.TERMINAL)) {
-            this._errHandler.recoverInline(this);
-            }
-            else {
-            	this._errHandler.reportMatch(this);
-                this.consume();
-            }
+            this.match(grammarlangParser.SYMBOL);
             this.state = 36;
             this._errHandler.sync(this);
             _la = this._input.LA(1);

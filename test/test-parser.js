@@ -1,101 +1,185 @@
 import test from 'ava';
-const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const parser = require('../src/parser.js');
 const errors = require('../src/errors');
 
-// test('empty string', t => {
-//     t.deepEqual(parser.parseString(''), {})
-// });
-
 test('simple case', t => {
-    const grammar = `S -> a S;`
-    t.deepEqual(parser.parseString(grammar), {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S'
+    const input = `S -> a S;`
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 1,
+        terminals: ['a'],
+        nonTerminals: ['S'],
+    });
+});
+
+test('simple case 2', t => {
+    const input = `S => a S;`
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 1,
+        terminals: ['a'],
+        nonTerminals: ['S'],
     })
 });
 
 test('simple case with comments', t => {
-    const grammar = `
+    const input = `
     /* this is\n
     a multiline\n
     comment */\n
     \n
     S -> a S; // this is an inline comment`
-    t.deepEqual(parser.parseString(grammar), {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ]
-        ],
-        '_start_symbol': 'S'
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 1,
+        terminals: ['a'],
+        nonTerminals: ['S'],
     })
 });
 
 test('complex case', t => {
-    const grammar = `
+    const input = `
     S -> a D;
     S -> ;
     D -> b;
-    `
-    t.deepEqual(parser.parseString(grammar), {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'D' }
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'D' }
+                ],
+                []
             ],
-            []
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' }
-            ]
-        ],
-        '_start_symbol': 'S'
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'S'],
+    })
+});
+
+test('complex case 2', t => {
+    const input = `
+    s -> a d;
+    s -> ;
+    d -> b;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            's': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'd' }
+                ],
+                []
+            ],
+            'd': [
+                [
+                    { type: parser.TERMINAL, value: 'b' }
+                ]
+            ],
+        },
+        startSymbol: 's',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['d', 's'],
     })
 });
 
 
 test('custom start symbol case', t => {
-    const grammar = `_start_symbol D; S -> a S; S -> ; D -> b S;`
-    t.deepEqual(parser.parseString(grammar), {
-        'S': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'a' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
+    const input = `#start_symbol D; S -> a S; S -> ; D -> b S;`
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+                []
             ],
-            []
-        ],
-        'D': [
-            [
-                { type: GrammarlangLexer.TERMINAL, value: 'b' },
-                { type: GrammarlangLexer.NONTERMINAL, value: 'S' }
-            ],
-        ],
-        '_start_symbol': 'D'
+            'D': [
+                [
+                    { type: parser.TERMINAL, value: 'b' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+            ]
+        },
+        startSymbol: 'D',
+        rulesNumber: 3,
+        terminals: ['a', 'b'],
+        nonTerminals: ['D', 'S'],
     })
 });
 
 test('lexer error case 1', t => {
-    const grammar = `_start_symbol D;\nS_ -> a S\n S -> ;\nD -> b S;\n`;
-    const f = () => parser.parseString(grammar);
+    const input = `#start_sybol D;\nS -> a S\n S -> ;\nD -> b S;\n`;
+    const f = () => parser.parseString(input);
     t.throws(f, errors.LexerError);
 });
 
 test('parser error case 1', t => {
-    const grammar = `_start_symbol D;\nS -> a S\n S -> ;\nD -> b S;\n`;
-    const f = () => parser.parseString(grammar);
+    const input = `#start_symbol D;\nS -> a S\n S -> ;\nD -> b S;\n`;
+    const f = () => parser.parseString(input);
     t.throws(f, errors.ParserError);
 });
 
 test('parser error case 2', t => {
-    const grammar = `S -> a S\n S -> ;\nD -> b S;\n /* unclosed comment`;
-    const f = () => parser.parseString(grammar);
+    const input = `S -> a S\n S -> ;\nD -> b S;\n /* unclosed comment`;
+    const f = () => parser.parseString(input);
     t.throws(f, errors.ParserError);
+});
+
+test('parser error empty input', t => {
+    const input = ``;
+    const f = () => parser.parseString(input);
+    t.throws(f, errors.ParserError);
+});
+
+test('parser error no rules input', t => {
+    const input = `#start_symbol S;`;
+    const f = () => parser.parseString(input);
+    t.throws(f, errors.ParserError);
+});
+
+test('start symbol not found error', t => {
+    const input = `
+    #start_symbol P;
+    S -> a D;
+    S -> ;
+    D -> b;
+    `;
+    const f = () => parser.parseString(input);
+    t.throws(f, errors.StartSymbolNotFound);
 });
