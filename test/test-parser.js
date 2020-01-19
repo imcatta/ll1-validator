@@ -253,3 +253,31 @@ test('duplicated rule case 2', t => {
         ],
     });
 });
+
+// test('duplicated rule case 3', t => {
+//     const input = `
+//     S -> A;
+//     A -> a;
+//     A -> a;
+//     `;
+//     t.deepEqual(parser.parseString(input), {
+//         grammar: {
+//             'S': [
+//                 [
+//                     { type: parser.NONTERMINAL, value: 'A' }
+//                 ],
+//             ],
+//             'A': [
+//                 [
+//                     { type: parser.TERMINAL, value: 'a' },
+//                     { type: parser.TERMINAL, value: 'a' },
+//                 ],
+//             ],
+//         },
+//         startSymbol: 'S',
+//         rulesNumber: 3,
+//         terminals: ['a'],
+//         nonTerminals: ['S'],
+//         warnings: [{ message: 'Duplicated rule', nonTerminal: 'A', index: 1 }],
+//     });
+// });

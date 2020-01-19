@@ -17,19 +17,13 @@ class Visitor {
     const nonTerminals = new Set();
     const warnings = [];
     let startSymbol = undefined;
-    let rulesNumber = 0;
 
     ctx.children.forEach(child => {
       if (child.constructor.name === 'Start_symbolContext') {
         startSymbol = this.visitStartSymbol(child);
 
       } else if (child.constructor.name === 'Rule_Context') {
-        rulesNumber++;
         const rule = this.visitRule(child);
-        const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
-        if (rules.some(equalToRule)) {
-          warnings.push({ message: 'Duplicated rule', nonTerminal: rule.l, index: rules.length });
-        }
         rules.push(rule);
         nonTerminals.add(rule.l);
         if (!startSymbol) {
@@ -65,10 +59,22 @@ class Visitor {
       grammar[rule.l] = tmp;
     });
 
+    // checks for duplicates
+    Object.keys(grammar).forEach(nonTerminal => {
+      const tmpRules = [];
+      grammar[nonTerminal].forEach((rule, index) => {
+        const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
+        if (tmpRules.some(equalToRule)) {
+          warnings.push({ message: 'Duplicated rule', nonTerminal, index });
+        }
+        tmpRules.push(rule);
+      });
+    });
+
     return {
       grammar,
       startSymbol,
-      rulesNumber,
+      rulesNumber: rules.length,
       terminals: Array.from(terminals).sort(),
       nonTerminals: Array.from(nonTerminals).sort(),
       warnings,
