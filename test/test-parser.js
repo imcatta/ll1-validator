@@ -17,6 +17,7 @@ test('simple case', t => {
         rulesNumber: 1,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     });
 });
 
@@ -35,6 +36,7 @@ test('simple case 2', t => {
         rulesNumber: 1,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     })
 });
 
@@ -58,6 +60,7 @@ test('simple case with comments', t => {
         rulesNumber: 1,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     })
 });
 
@@ -86,6 +89,7 @@ test('complex case', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     })
 });
 
@@ -114,6 +118,7 @@ test('complex case 2', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['d', 's'],
+        warnings: [],
     })
 });
 
@@ -140,7 +145,8 @@ test('custom start symbol case', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'S'],
-    })
+        warnings: [],
+    });
 });
 
 test('lexer error case 1', t => {
@@ -182,4 +188,68 @@ test('start symbol not found error', t => {
     `;
     const f = () => parser.parseString(input);
     t.throws(f, errors.StartSymbolNotFound);
+});
+
+test('duplicated rule case 1', t => {
+    const input = `
+    S -> a;
+    S -> a;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'a' }
+                ],
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 2,
+        terminals: ['a'],
+        nonTerminals: ['S'],
+        warnings: [{ message: 'Duplicated rule', nonTerminal: 'S', index: 1 }],
+    });
+});
+
+test('duplicated rule case 2', t => {
+    const input = `
+    S -> a A;
+    S -> ;
+    S -> a A;
+    S -> a A;
+    A -> b;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'A' }
+                ],
+                [],
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'A' }
+                ],
+                [
+                    { type: parser.TERMINAL, value: 'a' },
+                    { type: parser.NONTERMINAL, value: 'A' }
+                ],
+            ],
+            'A': [
+                [{ type: parser.TERMINAL, value: 'b' }]
+            ]
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['a', 'b'],
+        nonTerminals: ['A', 'S'],
+        warnings: [
+            { message: 'Duplicated rule', nonTerminal: 'S', index: 2 },
+            { message: 'Duplicated rule', nonTerminal: 'S', index: 3 },
+        ],
+    });
 });

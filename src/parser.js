@@ -15,6 +15,7 @@ class Visitor {
   visitRuleList(ctx) {
     const rules = [];
     const nonTerminals = new Set();
+    const warnings = [];
     let startSymbol = undefined;
     let rulesNumber = 0;
 
@@ -24,7 +25,11 @@ class Visitor {
 
       } else if (child.constructor.name === 'Rule_Context') {
         rulesNumber++;
-        const rule = this.visitRule(child)
+        const rule = this.visitRule(child);
+        const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
+        if (rules.some(equalToRule)) {
+          warnings.push({ message: 'Duplicated rule', nonTerminal: rule.l, index: rules.length });
+        }
         rules.push(rule);
         nonTerminals.add(rule.l);
         if (!startSymbol) {
@@ -65,7 +70,8 @@ class Visitor {
       startSymbol,
       rulesNumber,
       terminals: Array.from(terminals).sort(),
-      nonTerminals: Array.from(nonTerminals).sort()
+      nonTerminals: Array.from(nonTerminals).sort(),
+      warnings,
     };
   }
 

@@ -16,6 +16,7 @@ test('calculate nullables case 1', t => {
         rulesNumber: 1,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false] },
@@ -39,6 +40,7 @@ test('calculate nullables case 2', t => {
         rulesNumber: 2,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false, true] },
@@ -61,6 +63,7 @@ test('calculate nullables case 3', t => {
         rulesNumber: 3,
         terminals: [],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [true], D: [true] },
@@ -101,6 +104,7 @@ test('calculate nullables case 4', t => {
         rulesNumber: 7,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'E', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [true, true], D: [true, false, true], E: [false, true] },
@@ -141,6 +145,7 @@ test('calculate nullables case 5', t => {
         rulesNumber: 5,
         terminals: ['a', 'b', 'c', 'q'],
         nonTerminals: ['S', 'T'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false], T: [false, false, false, false] },
@@ -203,6 +208,7 @@ test('calculate nullables case 6', t => {
         rulesNumber: 10,
         terminals: ['nt', 'semicolon', 'ssk', 't'],
         nonTerminals: ['L', 'S', 'R', 'RULE', 'RULELIST', 'S', 'SS'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateNullables(input), {
         nullableRules: { S: [false], SS: [false, true], RULELIST: [false, true], RULE: [false], L: [false], R: [false, false, true] },
@@ -225,6 +231,7 @@ test('initialize first sets case 1', t => {
         rulesNumber: 2,
         terminals: ['a'],
         nonTerminals: ['S'],
+        warnings: [],
     };
     t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']]]
@@ -253,6 +260,7 @@ test('initialize first sets case 2', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']], [[]]],
@@ -280,6 +288,7 @@ test('initialize first sets case 3', t => {
         rulesNumber: 3,
         terminals: ['a'],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[['a']], [[]]],
@@ -327,6 +336,7 @@ test('initialize first sets case 4', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.initializeFirstSets(input), {
         'S': [[[]]],
@@ -366,6 +376,7 @@ test('calculate first sets dependencies case 1', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFirstSetsDependencies(input), {
         'S': [new Set(), new Set(['D'])],
@@ -403,6 +414,7 @@ test('calculate first sets dependencies case 2', t => {
         rulesNumber: 6,
         terminals: ['b', 'c'],
         nonTerminals: ['D', 'E', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFirstSetsDependencies(input), {
         'S': [new Set(['S', 'E', 'D']), new Set(['D']), new Set([])],
@@ -433,6 +445,7 @@ test('calculate first sets case 1', t => {
         rulesNumber: 3,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
@@ -478,6 +491,7 @@ test('calculate first sets case 2', t => {
         rulesNumber: 7,
         terminals: ['a', 'b'],
         nonTerminals: ['D', 'E', 'S'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
@@ -537,6 +551,7 @@ test('calculate first sets case 3', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFirstSets(input), {
         'S': [
@@ -633,6 +648,7 @@ test('calculate follow sets case 1', t => {
         rulesNumber: 5,
         terminals: ['a', 'b', 'c', 'q'],
         nonTerminals: ['S', 'T'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
@@ -688,6 +704,7 @@ test('calculate follow sets case 2', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
@@ -754,6 +771,7 @@ test('calculate follow sets case 3', t => {
         rulesNumber: 9,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'P', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFollowSets(input), {
         'P': [
@@ -832,6 +850,7 @@ test('calculate follow sets case 4', t => {
         rulesNumber: 7,
         terminals: ['d', 'i', 'n', 'v'],
         nonTerminals: ['L', 'R', 'S', 'X'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
@@ -916,6 +935,7 @@ test('calculate follow sets case 5', t => {
         rulesNumber: 10,
         terminals: ['nt', 'semicolon', 'ssk', 't'],
         nonTerminals: ['L', 'S', 'R', 'RULE', 'RULELIST', 'S', 'SS'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateFollowSets(input), {
         'S': [
@@ -984,6 +1004,7 @@ test('calculate look aheads case 1', t => {
         rulesNumber: 5,
         terminals: ['a', 'b', 'c', 'q'],
         nonTerminals: ['S', 'T'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateLookAheads(input), {
         'S': [
@@ -1038,6 +1059,7 @@ test('calculate look aheads case 2', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateLookAheads(input), {
         'S': [
@@ -1100,6 +1122,7 @@ test('calculate look aheads case 3', t => {
         rulesNumber: 9,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'P', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateLookAheads(input), {
         'P': [
@@ -1155,8 +1178,9 @@ test('calculate LL1 case 1', t => {
         rulesNumber: 5,
         terminals: ['a', 'b', 'c', 'q'],
         nonTerminals: ['S', 'T'],
+        warnings: [],
     };
-    t.deepEqual(ll1.isLL1(input), true);
+    t.true(ll1.isLL1(input));
 });
 
 test('calculate LL1 case 2', t => {
@@ -1199,8 +1223,9 @@ test('calculate LL1 case 2', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
-    t.deepEqual(ll1.isLL1(input), false);
+    t.false(ll1.isLL1(input));
 });
 
 test('calculate conflicts case 1', t => {
@@ -1243,6 +1268,7 @@ test('calculate conflicts case 1', t => {
         rulesNumber: 8,
         terminals: ['a', 'b', 'x', 'y'],
         nonTerminals: ['A', 'S', 'Z'],
+        warnings: [],
     };
     t.deepEqual(ll1.calculateAllConflicts(input), {
         'S': [],
