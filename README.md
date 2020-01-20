@@ -7,6 +7,8 @@
 
 LL(1) Validator is a javascript package that checks if a given a [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar) is a [LL(1) grammar](https://en.wikipedia.org/wiki/LL_grammar).
 
+User manual can be [found here](https://drive.google.com/open?id=1lqKTJiMnvf4HXYfh-OO2cxB2bZgDE8sB)
+
 ## Usage
 
 TODO
