@@ -22,7 +22,7 @@ function calculateNullables(input) {
                     }
                 });
             });
-            throw new errors.ParserError(`Loop detected: ${involvedNT.sort().join(', ')}`);
+            throw new errors.SemanticError(`Loop detected: ${involvedNT.sort().join(', ')}`);
         }
         doLoop = false;
         remainingCycles -= 1;
