@@ -2,6 +2,7 @@ const antlr4 = require('antlr4');
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const GrammarlangParser = require('../grammarlang/grammarlangParser').grammarlangParser;
 const errors = require('./errors');
+const DuplicatedRuleWarning = require('./warnings').DuplicatedRuleWarning;
 
 const NONTERMINAL = 0;
 const TERMINAL = 1;
@@ -15,7 +16,6 @@ class Visitor {
   visitRuleList(ctx) {
     const rules = [];
     const nonTerminals = new Set();
-    const warnings = [];
     let startSymbol = undefined;
 
     ctx.children.forEach(child => {
@@ -60,12 +60,13 @@ class Visitor {
     });
 
     // checks for duplicates
+    const warnings = [];
     Object.keys(grammar).forEach(nonTerminal => {
       const tmpRules = [];
       grammar[nonTerminal].forEach((rule, index) => {
         const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
         if (tmpRules.some(equalToRule)) {
-          warnings.push({ message: 'Duplicated rule', nonTerminal, index });
+          warnings.push(new DuplicatedRuleWarning(nonTerminal, index));
         }
         tmpRules.push(rule);
       });

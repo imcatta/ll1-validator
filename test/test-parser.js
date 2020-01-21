@@ -1,6 +1,7 @@
 import test from 'ava';
 const parser = require('../src/parser.js');
 const errors = require('../src/errors');
+const warnings = require('../src/warnings');
 
 test('simple case', t => {
     const input = `S -> a S;`
@@ -210,7 +211,7 @@ test('duplicated rule case 1', t => {
         rulesNumber: 2,
         terminals: ['a'],
         nonTerminals: ['S'],
-        warnings: [{ message: 'Duplicated rule', nonTerminal: 'S', index: 1 }],
+        warnings: [new warnings.DuplicatedRuleWarning('S', 1)],
     });
 });
 
@@ -248,8 +249,8 @@ test('duplicated rule case 2', t => {
         terminals: ['a', 'b'],
         nonTerminals: ['A', 'S'],
         warnings: [
-            { message: 'Duplicated rule', nonTerminal: 'S', index: 2 },
-            { message: 'Duplicated rule', nonTerminal: 'S', index: 3 },
+            new warnings.DuplicatedRuleWarning('S', 2),
+            new warnings.DuplicatedRuleWarning('S', 3),
         ],
     });
 });
@@ -276,8 +277,6 @@ test('duplicated rule case 3', t => {
         rulesNumber: 3,
         terminals: ['a'],
         nonTerminals: ['A', 'S'],
-        warnings: [
-            { message: 'Duplicated rule', nonTerminal: 'A', index: 1 },
-        ],
+        warnings: [new warnings.DuplicatedRuleWarning('A', 1)],
     });
 });
