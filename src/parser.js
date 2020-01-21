@@ -115,23 +115,14 @@ class Visitor {
   checkUnreachables(grammar, startSymbol, nonTerminals) {
     const unreachedNonTerminals = new Set(nonTerminals.filter(v => v !== startSymbol));
     const activeNonTerminals = Array.from(startSymbol);
-    const oldActiveNonTerminals = Array.from(startSymbol);
-
-    const addToActiveNonTerminals = (nonTerminal) => {
-      if (!oldActiveNonTerminals.includes(nonTerminal)) {
-        activeNonTerminals.push(nonTerminal);
-        oldActiveNonTerminals.push(nonTerminal)
-      }
-    };
 
     while (activeNonTerminals.length) {
       grammar[activeNonTerminals.pop()].forEach(rule => {
         rule
-          .filter(v => v.type === NONTERMINAL)
-          .map(v => v.value)
+          .filter(v => v.type === NONTERMINAL && unreachedNonTerminals.has(v.value))
           .forEach(nonTerminal => {
-            unreachedNonTerminals.delete(nonTerminal);
-            addToActiveNonTerminals(nonTerminal)
+            unreachedNonTerminals.delete(nonTerminal.value);
+            activeNonTerminals.push(nonTerminal.value);
           })
       });
     }
