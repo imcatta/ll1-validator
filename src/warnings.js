@@ -6,4 +6,11 @@ class DuplicatedRuleWarning {
     }
 }
 
-module.exports = Object.freeze({ DuplicatedRuleWarning });
+class UnreachableRuleWarning {
+    constructor(nonTerminal) {
+        this.message = 'Unreachable rule';
+        this.nonTerminal = nonTerminal;
+    }
+}
+
+module.exports = Object.freeze({ DuplicatedRuleWarning, UnreachableRuleWarning });

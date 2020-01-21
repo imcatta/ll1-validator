@@ -280,3 +280,102 @@ test('duplicated rule case 3', t => {
         warnings: [new warnings.DuplicatedRuleWarning('A', 1)],
     });
 });
+
+test('unused rules case 1', t => {
+    const input = `
+    S -> ;
+    A -> a;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [[]],
+            'A': [
+                [{ type: parser.TERMINAL, value: 'a' }],
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 2,
+        terminals: ['a'],
+        nonTerminals: ['A', 'S'],
+        warnings: [new warnings.UnreachableRuleWarning('A')],
+    });
+});
+
+test('unused rules case 2', t => {
+    const input = `
+    S -> A S;
+    A -> B C;
+    B -> b;
+    C -> c;
+    D -> d;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ]
+            ],
+            'A': [
+                [
+                    { type: parser.NONTERMINAL, value: 'B' },
+                    { type: parser.NONTERMINAL, value: 'C' }
+                ]
+            ],
+            'B': [
+                [{ type: parser.TERMINAL, value: 'b' }],
+            ],
+            'C': [
+                [{ type: parser.TERMINAL, value: 'c' }],
+            ],
+            'D': [
+                [{ type: parser.TERMINAL, value: 'd' }],
+            ],
+        },
+        startSymbol: 'S',
+        rulesNumber: 5,
+        terminals: ['b', 'c', 'd'],
+        nonTerminals: ['A', 'B', 'C', 'D', 'S'],
+        warnings: [new warnings.UnreachableRuleWarning('D')],
+    });
+});
+
+test('unused rules case 3', t => {
+    const input = `
+    S -> A B;
+    A -> ;
+    B -> C S;
+    C -> ;
+    D -> A;
+    E -> ;
+    `;
+    t.deepEqual(parser.parseString(input), {
+        grammar: {
+            'S': [
+                [
+                    { type: parser.NONTERMINAL, value: 'A' },
+                    { type: parser.NONTERMINAL, value: 'B' }
+                ]
+            ],
+            'A': [[]],
+            'B': [
+                [
+                    { type: parser.NONTERMINAL, value: 'C' },
+                    { type: parser.NONTERMINAL, value: 'S' }
+                ],
+            ],
+            'C': [[]],
+            'D': [[{ type: parser.NONTERMINAL, value: 'A' }]],
+            'E': [[]]
+        },
+        startSymbol: 'S',
+        rulesNumber: 6,
+        terminals: [],
+        nonTerminals: ['A', 'B', 'C', 'D', 'E', 'S'],
+        warnings: [
+            new warnings.UnreachableRuleWarning('D'),
+            new warnings.UnreachableRuleWarning('E'),
+        ],
+    });
+});

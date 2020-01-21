@@ -2,7 +2,7 @@ const antlr4 = require('antlr4');
 const GrammarlangLexer = require('../grammarlang/grammarlangLexer').grammarlangLexer;
 const GrammarlangParser = require('../grammarlang/grammarlangParser').grammarlangParser;
 const errors = require('./errors');
-const DuplicatedRuleWarning = require('./warnings').DuplicatedRuleWarning;
+const warnings = require('./warnings');
 
 const NONTERMINAL = 0;
 const TERMINAL = 1;
@@ -59,26 +59,14 @@ class Visitor {
       grammar[rule.l] = tmp;
     });
 
-    // checks for duplicates
-    const warnings = [];
-    Object.keys(grammar).forEach(nonTerminal => {
-      const tmpRules = [];
-      grammar[nonTerminal].forEach((rule, index) => {
-        const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
-        if (tmpRules.some(equalToRule)) {
-          warnings.push(new DuplicatedRuleWarning(nonTerminal, index));
-        }
-        tmpRules.push(rule);
-      });
-    });
-
     return {
       grammar,
       startSymbol,
       rulesNumber: rules.length,
       terminals: Array.from(terminals).sort(),
       nonTerminals: Array.from(nonTerminals).sort(),
-      warnings,
+      warnings: this.checkDuplicates(grammar).concat(
+        this.checkUnreachables(grammar, startSymbol, Array.from(nonTerminals))),
     };
   }
 
@@ -107,6 +95,51 @@ class Visitor {
 
   visitR(ctx) {
     return ctx.children.map(child => child.getText());
+  }
+
+  checkDuplicates(grammar) {
+    const result = [];
+    Object.keys(grammar).forEach(nonTerminal => {
+      const tmpRules = [];
+      grammar[nonTerminal].forEach((rule, index) => {
+        const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
+        if (tmpRules.some(equalToRule)) {
+          result.push(new warnings.DuplicatedRuleWarning(nonTerminal, index));
+        }
+        tmpRules.push(rule);
+      });
+    });
+    return result
+  }
+
+  checkUnreachables(grammar, startSymbol, nonTerminals) {
+    const unreachedNonTerminals = new Set(nonTerminals.filter(v => v !== startSymbol));
+    const activeNonTerminals = Array.from(startSymbol);
+    const oldActiveNonTerminals = Array.from(startSymbol);
+
+    const addToActiveNonTerminals = (nonTerminal) => {
+      if (!oldActiveNonTerminals.includes(nonTerminal)) {
+        activeNonTerminals.push(nonTerminal);
+        oldActiveNonTerminals.push(nonTerminal)
+      }
+    };
+
+    while (activeNonTerminals.length) {
+      grammar[activeNonTerminals.pop()].forEach(rule => {
+        rule
+          .filter(v => v.type === NONTERMINAL)
+          .map(v => v.value)
+          .forEach(nonTerminal => {
+            unreachedNonTerminals.delete(nonTerminal);
+            addToActiveNonTerminals(nonTerminal)
+          })
+      });
+    }
+
+    return Array
+      .from(unreachedNonTerminals)
+      .sort()
+      .map(v => new warnings.UnreachableRuleWarning(v));
   }
 }
 
