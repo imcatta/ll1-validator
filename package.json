@@ -1,6 +1,6 @@
 {
   "name": "ll1-validator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A tool that checks if a given grammar is LL(1).",
   "main": "src/index.js",
   "scripts": {
