@@ -346,6 +346,7 @@ test('unused rules case 3', t => {
     S -> A B;
     A -> ;
     B -> C S;
+    B -> ;
     C -> ;
     D -> A;
     E -> ;
@@ -364,13 +365,14 @@ test('unused rules case 3', t => {
                     { type: parser.NONTERMINAL, value: 'C' },
                     { type: parser.NONTERMINAL, value: 'S' }
                 ],
+                []
             ],
             'C': [[]],
             'D': [[{ type: parser.NONTERMINAL, value: 'A' }]],
             'E': [[]]
         },
         startSymbol: 'S',
-        rulesNumber: 6,
+        rulesNumber: 7,
         terminals: [],
         nonTerminals: ['A', 'B', 'C', 'D', 'E', 'S'],
         warnings: [
