@@ -103,8 +103,9 @@ class Visitor {
       const tmpRules = [];
       grammar[nonTerminal].forEach((rule, index) => {
         const equalToRule = v => JSON.stringify(v) === JSON.stringify(rule);
-        if (tmpRules.some(equalToRule)) {
-          result.push(new warnings.DuplicatedRuleWarning(nonTerminal, index));
+        const sameAs = tmpRules.findIndex(equalToRule);
+        if (sameAs !== -1) {
+          result.push(new warnings.DuplicatedRuleWarning(nonTerminal, index, sameAs));
         }
         tmpRules.push(rule);
       });

@@ -1,8 +1,9 @@
 class DuplicatedRuleWarning {
-    constructor(nonTerminal, index) {
+    constructor(nonTerminal, index, sameAs) {
         this.message = 'Duplicated rule';
         this.nonTerminal = nonTerminal;
         this.index = index;
+        this.sameAs = sameAs;
     }
 }
 

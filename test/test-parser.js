@@ -211,7 +211,7 @@ test('duplicated rule case 1', t => {
         rulesNumber: 2,
         terminals: ['a'],
         nonTerminals: ['S'],
-        warnings: [new warnings.DuplicatedRuleWarning('S', 1)],
+        warnings: [new warnings.DuplicatedRuleWarning('S', 1, 0)],
     });
 });
 
@@ -249,8 +249,8 @@ test('duplicated rule case 2', t => {
         terminals: ['a', 'b'],
         nonTerminals: ['A', 'S'],
         warnings: [
-            new warnings.DuplicatedRuleWarning('S', 2),
-            new warnings.DuplicatedRuleWarning('S', 3),
+            new warnings.DuplicatedRuleWarning('S', 2, 0),
+            new warnings.DuplicatedRuleWarning('S', 3, 0),
         ],
     });
 });
@@ -277,7 +277,7 @@ test('duplicated rule case 3', t => {
         rulesNumber: 3,
         terminals: ['a'],
         nonTerminals: ['A', 'S'],
-        warnings: [new warnings.DuplicatedRuleWarning('A', 1)],
+        warnings: [new warnings.DuplicatedRuleWarning('A', 1, 0)],
     });
 });
 
