@@ -7,11 +7,182 @@
 
 LL(1) Validator is a javascript package that checks if a given a [context-free grammar](https://en.wikipedia.org/wiki/Context-free_grammar) is a [LL(1) grammar](https://en.wikipedia.org/wiki/LL_grammar).
 
-User manual can be [found here](https://drive.google.com/open?id=1lqKTJiMnvf4HXYfh-OO2cxB2bZgDE8sB)
+The user manual can be found [here](https://drive.google.com/open?id=1lqKTJiMnvf4HXYfh-OO2cxB2bZgDE8sB).
+
+## Install
+```bash
+npm install --save ll1-validator
+```
 
 ## Usage
-
-TODO
+```javascript
+const ll1Validator = require('ll1-validator');
+const input = `
+S -> A q;
+A -> a A;
+A -> ;
+`;
+const result = ll1Validator.validate(input);
+console.log(result);
+```
+```javascript
+{
+  "grammar": {
+    "S": [
+      [
+        {
+          "type": parsers.NONTERMINAL,
+          "value": "A"
+        },
+        {
+          "type": parsers.TERMINAL,
+          "value": "q"
+        }
+      ]
+    ],
+    "A": [
+      [
+        {
+          "type": parsers.TERMINAL,
+          "value": "a"
+        },
+        {
+          "type": parsers.NONTERMINAL,
+          "value": "A"
+        }
+      ],
+      []
+    ]
+  },
+  "startSymbol": "S",
+  "rulesNumber": 3,
+  "terminals": [
+    "a",
+    "q"
+  ],
+  "nonTerminals": [
+    "A",
+    "S"
+  ],
+  "warnings": [],
+  "nullableRules": {
+    "A": [
+      false,
+      true
+    ],
+    "S": [
+      false
+    ]
+  },
+  "nullableNonTerminals": {
+    "A": true,
+    "S": false
+  },
+  "firstSets": {
+    "A": [
+      [
+        [
+          "a"
+        ],
+        [
+          "a"
+        ],
+        [
+          "a"
+        ]
+      ],
+      [
+        [],
+        [],
+        []
+      ]
+    ],
+    "S": [
+      [
+        [
+          "q"
+        ],
+        [
+          "a",
+          "q"
+        ],
+        [
+          "a",
+          "q"
+        ]
+      ]
+    ]
+  },
+  "followSets": {
+    "A": [
+      [
+        "q"
+      ],
+      [
+        "q"
+      ]
+    ],
+    "S": [
+      [
+        "↙"
+      ],
+      [
+        "↙"
+      ]
+    ]
+  },
+  "firstSetsDependencies": {
+    "A": [
+      {},
+      {}
+    ],
+    "S": [
+      {}
+    ]
+  },
+  "followSetsDependencies": {
+    "follow_nonTerminals": {
+      "A": [
+        "A"
+      ],
+      "S": []
+    },
+    "follow_terminals": {
+      "A": [
+        [
+          "q"
+        ]
+      ],
+      "S": [
+        [
+          "↙"
+        ]
+      ]
+    }
+  },
+  "lookAheads": {
+    "A": [
+      [
+        "a"
+      ],
+      [
+        "q"
+      ]
+    ],
+    "S": [
+      [
+        "a",
+        "q"
+      ]
+    ]
+  },
+  "isLL1": true,
+  "lookAheadsConflicts": {
+    "A": [],
+    "S": []
+  }
+}
+```
 
 ## Running in a browser
 
